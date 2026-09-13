@@ -10,7 +10,6 @@ import { StatusBadge } from "@/components/status-badge";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Link } from "@/i18n/navigation";
 import { openEventWhere } from "@/lib/events";
-import { paymentsAreSimulated } from "@/server/payments";
 import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser, getMembership } from "@/server/session";
@@ -66,8 +65,6 @@ export default async function SiteDetailPage({
         select: { id: true },
       })
     : null;
-
-  const simulated = paymentsAreSimulated();
 
   const place = [site.address, site.city, site.country].filter(Boolean).join(", ");
 
@@ -373,7 +370,6 @@ export default async function SiteDetailPage({
                                 )
                           }
                           isFree={event.priceCents === 0}
-                          simulatedPayments={simulated}
                           defaultName={user.name ?? ""}
                         />
                       ) : (

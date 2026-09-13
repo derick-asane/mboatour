@@ -26,7 +26,6 @@ export function BookEventDialog({
   maxSeats,
   priceLabel,
   isFree,
-  simulatedPayments,
   defaultName,
 }: {
   eventId: string;
@@ -34,7 +33,6 @@ export function BookEventDialog({
   maxSeats: number;
   priceLabel: string;
   isFree: boolean;
-  simulatedPayments: boolean;
   defaultName: string;
 }) {
   const t = useTranslations("Booking");
@@ -225,9 +223,6 @@ export function BookEventDialog({
                 </div>
               ) : null}
 
-              {simulatedPayments ? (
-                <p className="alert alert-warning">{t("simulatedNotice")}</p>
-              ) : null}
             </div>
           )}
 
