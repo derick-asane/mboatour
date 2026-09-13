@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Participants } from "@/app/[locale]/sites/[slug]/events/[eventId]/chat/participants";
 import { ChatRoom } from "@/components/chat/chat-room";
+import { CoverImage } from "@/components/cover-image";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { chatClosesAt, listMessages, loadChatAccess } from "@/server/chat";
@@ -58,17 +59,27 @@ export default async function EventChatPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-1.5">
-          <p className="eyebrow">{t("eyebrow")}</p>
-          <h1 className="page-title">{access.event.title}</h1>
-          <p className="meta">
-            {access.event.siteName}
-            {" · "}
-            {format.dateTime(access.event.startsAt, {
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}
-          </p>
+        {/* The photo says which room this is at a glance, which matters once
+            somebody is in more than one chat. */}
+        <div className="flex items-center gap-4">
+          <CoverImage
+            src={access.event.coverImageUrl}
+            alt=""
+            className="h-16 w-16 shrink-0 rounded-xl border border-line sm:h-20 sm:w-20"
+          />
+
+          <div className="min-w-0 space-y-1.5">
+            <p className="eyebrow">{t("eyebrow")}</p>
+            <h1 className="page-title">{access.event.title}</h1>
+            <p className="meta">
+              {access.event.siteName}
+              {" · "}
+              {format.dateTime(access.event.startsAt, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </p>
+          </div>
         </div>
 
         <Link href={`/sites/${slug}`} className="btn-secondary btn-sm">

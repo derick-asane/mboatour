@@ -19,6 +19,9 @@ export type ChatAccess = {
     siteId: string;
     siteName: string;
     siteSlug: string;
+    /// The event photo, falling back to the site so the header always shows
+    /// something recognisable.
+    coverImageUrl: string | null;
   };
   /// A member of the site team, who may moderate.
   isTeam: boolean;
@@ -51,7 +54,8 @@ export async function loadChatAccess(
       startsAt: true,
       endsAt: true,
       siteId: true,
-      site: { select: { name: true, slug: true } },
+      coverImageUrl: true,
+      site: { select: { name: true, slug: true, coverImageUrl: true } },
     },
   });
 
@@ -96,6 +100,7 @@ export async function loadChatAccess(
       siteId: event.siteId,
       siteName: event.site.name,
       siteSlug: event.site.slug,
+      coverImageUrl: event.coverImageUrl ?? event.site.coverImageUrl,
     },
     isTeam,
     muted,
