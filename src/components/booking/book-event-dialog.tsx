@@ -5,7 +5,6 @@ import { useActionState, useEffect, useRef, useState } from "react";
 
 import { Field, FormMessage, SubmitButton } from "@/components/form";
 import {
-  isPlausibleCard,
   lastFourDigits,
   needsCard,
   needsPhone,
@@ -45,8 +44,10 @@ export function BookEventDialog({
   const [method, setMethod] = useState<PaymentMethod>("MTN_MOMO");
   const [card, setCard] = useState("");
 
+  // Card details are cosmetic while payments are simulated, so nothing here
+  // judges what is typed. Validation returns with a real gateway, which will
+  // do it on its own hosted field anyway.
   const cardLast4 = lastFourDigits(card);
-  const cardLooksValid = card === "" || isPlausibleCard(card);
 
   // A booking that went through has nothing left to show in a dialog.
   useEffect(() => {
@@ -193,7 +194,7 @@ export function BookEventDialog({
                       are submitted, so no card number reaches our server. */}
                   <Field label={t("cardNumber")} hint={t("cardHint")}>
                     <input
-                      className={`input ${cardLooksValid ? "" : "input-error"}`}
+                      className="input"
                       inputMode="numeric"
                       autoComplete="cc-number"
                       placeholder="4242 4242 4242 4242"
@@ -221,10 +222,6 @@ export function BookEventDialog({
                   </div>
 
                   <input type="hidden" name="cardLast4" value={cardLast4 ?? ""} />
-
-                  {!cardLooksValid ? (
-                    <p className="alert alert-error">{t("cardInvalid")}</p>
-                  ) : null}
                 </div>
               ) : null}
 

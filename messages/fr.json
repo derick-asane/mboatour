@@ -525,7 +525,6 @@
     "cardHint": "Seuls les quatre derniers chiffres nous sont transmis.",
     "cardExpiry": "Expiration",
     "cardCvc": "CVC",
-    "cardInvalid": "Ce numéro de carte semble incorrect.",
     "payNow": "Payer {amount}",
     "confirmFree": "Confirmer la réservation",
     "simulatedNotice": "Les paiements sont simulés tant qu’aucun prestataire n’est connecté. Rien n’est débité, et un numéro ou une carte se terminant par 0000 est refusé pour tester ce cas."

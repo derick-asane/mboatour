@@ -60,7 +60,7 @@ export async function bookEventAction(
     note: formData.get("note") ?? undefined,
     method: formData.get("method") ?? undefined,
     payerPhone: formData.get("payerPhone") ?? undefined,
-    cardLast4: formData.get("cardLast4") ?? undefined,
+    cardLast4: formData.get("cardLast4") || undefined,
   });
 
   if (!parsed.success) return failure("invalidInput");
@@ -111,7 +111,14 @@ export async function bookEventAction(
     if (!payerPhone) return failure("invalidPhone");
   }
 
-  if (method && needsCard(method) && !parsed.data.cardLast4) {
+  // A simulated charge has no card to check. A real provider will, so the
+  // requirement belongs to the provider rather than the form.
+  if (
+    method &&
+    needsCard(method) &&
+    !parsed.data.cardLast4 &&
+    !paymentProvider().simulated
+  ) {
     return failure("invalidCard");
   }
 

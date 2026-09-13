@@ -525,7 +525,6 @@
     "cardHint": "Only the last four digits are sent to us.",
     "cardExpiry": "Expiry",
     "cardCvc": "CVC",
-    "cardInvalid": "That card number does not look right.",
     "payNow": "Pay {amount}",
     "confirmFree": "Confirm booking",
     "simulatedNotice": "Payments are simulated while no provider is connected. Nothing is charged, and a number or card ending 0000 is declined so you can test that path."
