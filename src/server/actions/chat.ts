@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { failure, type ActionState } from "@/server/action-state";
+import { editWindowOpen } from "@/lib/chat-limits";
 import { loadChatAccess, MAX_MESSAGE_LENGTH } from "@/server/chat";
 
 const messageSchema = z.object({
@@ -106,4 +107,50 @@ export async function toggleMuteAction(
   revalidatePath(`/sites/${access.event.siteSlug}/events/${eventId}/chat`);
 
   return { success: existing ? "participantUnmuted" : "participantMuted" };
+}
+
+const editSchema = z.object({
+  messageId: z.string().min(1),
+  body: z.string().trim().min(1).max(MAX_MESSAGE_LENGTH),
+});
+
+/// Corrects wording shortly after posting. Only the author may edit, and only
+/// inside the window: a moderator who dislikes a message removes it rather than
+/// putting different words in someone else's mouth.
+export async function editMessageAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = editSchema.safeParse({
+    messageId: formData.get("messageId"),
+    body: formData.get("body"),
+  });
+
+  if (!parsed.success) return failure("messageEmpty");
+
+  const message = await prisma.eventMessage.findUnique({
+    where: { id: parsed.data.messageId },
+    select: { id: true, userId: true, eventId: true, createdAt: true, deletedAt: true },
+  });
+
+  if (!message) return failure("messageNotFound");
+
+  const access = await loadChatAccess(message.eventId);
+
+  if (!access) return failure("forbidden");
+  if (message.userId !== access.user.id) return failure("notYourMessage");
+  if (message.deletedAt) return failure("messageNotFound");
+
+  // The clock is checked here, not in the browser: a stale page must not be
+  // able to rewrite an old message.
+  if (!editWindowOpen(message.createdAt)) return failure("editWindowClosed");
+
+  await prisma.eventMessage.update({
+    where: { id: message.id },
+    data: { body: parsed.data.body, editedAt: new Date() },
+  });
+
+  revalidatePath(`/sites/${access.event.siteSlug}/events/${access.event.id}/chat`);
+
+  return { success: "messageEdited" };
 }

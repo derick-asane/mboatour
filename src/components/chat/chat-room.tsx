@@ -4,8 +4,16 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { MAX_MESSAGE_LENGTH } from "@/lib/chat-limits";
-import { deleteMessageAction, postMessageAction } from "@/server/actions/chat";
+import {
+  editWindowOpen,
+  MAX_MESSAGE_LENGTH,
+  MESSAGE_EDIT_WINDOW_MINUTES,
+} from "@/lib/chat-limits";
+import {
+  deleteMessageAction,
+  editMessageAction,
+  postMessageAction,
+} from "@/server/actions/chat";
 import { initialActionState } from "@/server/action-state";
 
 type Message = {
@@ -15,6 +23,7 @@ type Message = {
   authorId: string;
   authorName: string;
   removed: boolean;
+  edited: boolean;
 };
 
 /// How often the room asks for new messages. Short enough to feel live, long
@@ -53,6 +62,10 @@ export function ChatRoom({
   const format = useFormatter();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  // Ticks while a message is being written, so the edit link disappears on its
+  // own when the window runs out rather than at the next poll.
+  const [now, setNow] = useState(() => Date.now());
   const listRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const pinnedToBottom = useRef(true);
@@ -74,6 +87,12 @@ export function ChatRoom({
       // A dropped poll is not worth showing: the next one is seconds away.
     }
   }, [eventId]);
+
+  useEffect(() => {
+    const clock = setInterval(() => setNow(Date.now()), 30_000);
+
+    return () => clearInterval(clock);
+  }, []);
 
   useEffect(() => {
     function poll() {
@@ -121,6 +140,19 @@ export function ChatRoom({
     await refresh();
   }
 
+  async function saveEdit(formData: FormData) {
+    setError(null);
+    const result = await editMessageAction(initialActionState, formData);
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    setEditingId(null);
+    await refresh();
+  }
+
   return (
     <div className="flex h-full min-h-0 flex-col gap-3">
       <div
@@ -162,6 +194,30 @@ export function ChatRoom({
                     <p className="mt-1 inline-block rounded-xl border border-dashed border-line-strong px-3 py-2 text-sm italic text-faint">
                       {t("removed")}
                     </p>
+                  ) : editingId === message.id ? (
+                    <form action={saveEdit} className="mt-1 space-y-2 text-left">
+                      <input type="hidden" name="messageId" value={message.id} />
+                      <input
+                        className="input"
+                        name="body"
+                        defaultValue={message.body}
+                        maxLength={MAX_MESSAGE_LENGTH}
+                        autoFocus
+                        required
+                      />
+                      <div className="flex gap-2">
+                        <button type="submit" className="btn-primary btn-sm">
+                          {t("save")}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-ghost btn-sm"
+                          onClick={() => setEditingId(null)}
+                        >
+                          {t("cancelEdit")}
+                        </button>
+                      </div>
+                    </form>
                   ) : (
                     <div
                       className={`mt-1 inline-block whitespace-pre-wrap break-words rounded-xl border px-3 py-2 text-left text-sm ${
@@ -171,16 +227,41 @@ export function ChatRoom({
                       }`}
                     >
                       {message.body}
+                      {message.edited ? (
+                        <span className="ml-1.5 text-xs text-faint">
+                          {t("editedMark")}
+                        </span>
+                      ) : null}
                     </div>
                   )}
 
-                  {!message.removed && (mine || isTeam) ? (
-                    <form action={remove} className="mt-1">
-                      <input type="hidden" name="messageId" value={message.id} />
-                      <button type="submit" className="text-xs text-faint hover:text-danger">
-                        {t("remove")}
-                      </button>
-                    </form>
+                  {!message.removed && editingId !== message.id ? (
+                    <div className="mt-1 flex flex-wrap gap-3">
+                      {/* Only the author, and only while the window is open. The
+                          server checks the same thing; this just hides a button
+                          that would fail. */}
+                      {mine && editWindowOpen(new Date(message.createdAt), new Date(now)) ? (
+                        <button
+                          type="button"
+                          className="text-xs text-faint hover:text-accent"
+                          onClick={() => setEditingId(message.id)}
+                        >
+                          {t("edit")}
+                        </button>
+                      ) : null}
+
+                      {mine || isTeam ? (
+                        <form action={remove}>
+                          <input type="hidden" name="messageId" value={message.id} />
+                          <button
+                            type="submit"
+                            className="text-xs text-faint hover:text-danger"
+                          >
+                            {t("remove")}
+                          </button>
+                        </form>
+                      ) : null}
+                    </div>
                   ) : null}
                 </div>
               </div>
@@ -189,7 +270,11 @@ export function ChatRoom({
         )}
       </div>
 
-      {error ? <p className="alert alert-error">{t(error)}</p> : null}
+      {error ? (
+        <p className="alert alert-error">
+          {t(error, { minutes: MESSAGE_EDIT_WINDOW_MINUTES })}
+        </p>
+      ) : null}
 
       {canPost ? (
         <form ref={formRef} action={submit} className="flex items-end gap-2">

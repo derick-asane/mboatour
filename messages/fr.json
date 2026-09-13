@@ -280,7 +280,8 @@
     "resetLinkSent": "Si ce compte existe, un lien de réinitialisation est en route.",
     "messageRemoved": "Message retiré.",
     "participantMuted": "Participant rendu silencieux.",
-    "participantUnmuted": "Le participant peut de nouveau écrire."
+    "participantUnmuted": "Le participant peut de nouveau écrire.",
+    "messageEdited": "Message mis à jour."
   },
   "Errors": {
     "invalidInput": "Veuillez vérifier les champs signalés.",
@@ -504,7 +505,13 @@
     "messageEmpty": "Écrivez d’abord quelque chose.",
     "messageNotFound": "Ce message n’existe plus.",
     "forbidden": "Vous ne faites pas partie de cette discussion.",
-    "cannotMuteSelf": "Vous ne pouvez pas vous rendre silencieux."
+    "cannotMuteSelf": "Vous ne pouvez pas vous rendre silencieux.",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "cancelEdit": "Annuler",
+    "editedMark": "(modifié)",
+    "editWindowClosed": "Un message ne peut être modifié que dans les {minutes} minutes suivant son envoi.",
+    "notYourMessage": "Vous ne pouvez modifier que vos propres messages."
   },
   "Booking": {
     "title": "Réserver cet événement",

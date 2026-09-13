@@ -280,7 +280,8 @@
     "resetLinkSent": "If that account exists, a reset link is on its way.",
     "messageRemoved": "Message removed.",
     "participantMuted": "Participant muted.",
-    "participantUnmuted": "Participant can post again."
+    "participantUnmuted": "Participant can post again.",
+    "messageEdited": "Message updated."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -504,7 +505,13 @@
     "messageEmpty": "Write something first.",
     "messageNotFound": "That message is gone.",
     "forbidden": "You are not in this chat.",
-    "cannotMuteSelf": "You cannot mute yourself."
+    "cannotMuteSelf": "You cannot mute yourself.",
+    "edit": "Edit",
+    "save": "Save",
+    "cancelEdit": "Cancel",
+    "editedMark": "(edited)",
+    "editWindowClosed": "Messages can only be edited within {minutes} minutes of sending.",
+    "notYourMessage": "You can only edit your own messages."
   },
   "Booking": {
     "title": "Book this event",
