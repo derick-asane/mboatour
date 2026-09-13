@@ -6,6 +6,10 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { failure, type ActionState } from "@/server/action-state";
+import {
+  sendVisitDecisionEmail,
+  sendVisitRequestedEmails,
+} from "@/server/email/notify";
 import { PermissionError, requirePermission, requireUser } from "@/server/session";
 
 const visitSchema = z.object({
@@ -39,7 +43,7 @@ export async function requestVisitAction(
 
   const site = await prisma.touristicSite.findUnique({
     where: { id: siteId },
-    select: { id: true, slug: true, published: true },
+    select: { id: true, slug: true, name: true, published: true },
   });
 
   if (!site?.published) return failure("siteNotFound");
@@ -59,6 +63,17 @@ export async function requestVisitAction(
   await prisma.visitRequest.create({
     data: { siteId, userId: user.id, visitDate, partySize, message },
   });
+
+  await sendVisitRequestedEmails(
+    {
+      siteName: site.name,
+      siteSlug: site.slug,
+      visitDate: visitDate.toISOString().slice(0, 10),
+      partySize,
+      visitorName: user.name ?? user.email,
+    },
+    site.id,
+  );
 
   const locale = await getLocale();
   revalidatePath(`/${locale}/sites/${site.slug}`);
@@ -106,7 +121,14 @@ export async function decideVisitRequestAction(
 
   const request = await prisma.visitRequest.findUnique({
     where: { id: requestId },
-    select: { id: true, siteId: true, site: { select: { slug: true } } },
+    select: {
+      id: true,
+      siteId: true,
+      visitDate: true,
+      partySize: true,
+      user: { select: { email: true, locale: true, name: true } },
+      site: { select: { slug: true, name: true } },
+    },
   });
 
   if (!request) return failure("visitNotFound");
@@ -127,6 +149,19 @@ export async function decideVisitRequestAction(
       reviewedAt: new Date(),
     },
   });
+
+  await sendVisitDecisionEmail(
+    request.user,
+    {
+      siteName: request.site.name,
+      siteSlug: request.site.slug,
+      visitDate: request.visitDate.toISOString().slice(0, 10),
+      partySize: request.partySize,
+      visitorName: request.user.name ?? request.user.email,
+    },
+    decision as "APPROVED" | "REJECTED",
+    responseNote,
+  );
 
   const locale = await getLocale();
   revalidatePath(`/${locale}/manage/${request.site.slug}/visits`);

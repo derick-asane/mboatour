@@ -53,6 +53,12 @@ export default async function LoginPage({
 
       <LoginForm next={next} />
 
+      <p className="text-center text-sm">
+        <Link href="/forgot" className="link">
+          {t("forgotLink")}
+        </Link>
+      </p>
+
       <p className="text-center text-sm text-muted">
         {t("noAccount")}{" "}
         <Link href="/register" className="link">

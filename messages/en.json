@@ -49,7 +49,18 @@
     "noAccount": "No account yet?",
     "hasAccount": "Already have an account?",
     "continueWith": "Continue with {provider}",
-    "orUseEmail": "or use your email"
+    "orUseEmail": "or use your email",
+    "forgotLink": "Forgot your password?",
+    "forgotTitle": "Reset your password",
+    "forgotSubtitle": "We will email you a link to set a new one.",
+    "forgotHint": "The address you sign in with.",
+    "forgotCta": "Send the reset link",
+    "backToSignIn": "Back to sign in",
+    "resetTitle": "Choose a new password",
+    "resetSubtitle": "Pick something only you know.",
+    "resetCta": "Save the new password",
+    "newPassword": "New password",
+    "resetLinkInvalid": "This link has expired or has already been used."
   },
   "Home": {
     "heroTitle": "Find your next place to visit",
@@ -262,7 +273,8 @@
     "verificationRequested": "Verification requested. The platform team will review it.",
     "adminUpdated": "Administrator updated.",
     "profileUpdated": "Profile updated.",
-    "passwordUpdated": "Password changed."
+    "passwordUpdated": "Password changed.",
+    "resetLinkSent": "If that account exists, a reset link is on its way."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -297,7 +309,8 @@
     "alreadyVerified": "This site is already verified.",
     "cannotDemoteSelf": "You cannot remove your own super administrator role.",
     "wrongPassword": "That current password is not right.",
-    "newPassword": "Use at least 8 characters."
+    "newPassword": "Use at least 8 characters.",
+    "resetLinkInvalid": "This link has expired or has already been used."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -410,5 +423,49 @@
     "openExternally": "Open in your maps app",
     "back": "Back",
     "openMap": "Open the map"
+  },
+  "Email": {
+    "footer": "Sent by {appName}.",
+    "factEvent": "Event",
+    "factWhen": "When",
+    "factSeats": "Seats",
+    "factPeople": "People",
+    "factReference": "Reference",
+    "viewBookings": "See your bookings",
+    "viewSite": "View the site",
+    "reviewCta": "Review it",
+    "manageCta": "Open your site",
+    "resetSubject": "Reset your password",
+    "resetTitle": "Reset your password",
+    "resetBody": "Use the link below to choose a new password. It works once and expires in {minutes} minutes.",
+    "resetIgnore": "If you did not ask for this, you can ignore this message. Your password stays as it is.",
+    "resetCta": "Choose a new password",
+    "bookingCreatedSubject": "Your booking for {event}",
+    "bookingCreatedTitle": "Booking received",
+    "bookingCreatedBody": "Thank you. {site} has your booking and will confirm it shortly. Keep the reference below.",
+    "bookingTeamSubject": "New booking for {event}",
+    "bookingTeamTitle": "A new booking arrived",
+    "bookingTeamBody": "Someone booked an event at {site} and is waiting for your confirmation.",
+    "bookingConfirmedSubject": "Your booking for {event} is confirmed",
+    "bookingConfirmedTitle": "Booking confirmed",
+    "bookingConfirmedBody": "{site} confirmed your booking. Show the reference below when you arrive.",
+    "bookingCancelledSubject": "Your booking for {event} was cancelled",
+    "bookingCancelledTitle": "Booking cancelled",
+    "bookingCancelledBody": "{site} cancelled this booking. Get in touch with them if this looks wrong.",
+    "visitTeamSubject": "New visit request for {site}",
+    "visitTeamTitle": "A visit request arrived",
+    "visitTeamBody": "{name} asked to visit and is waiting for your answer.",
+    "visitApprovedSubject": "Your visit to {site} is approved",
+    "visitApprovedTitle": "Visit approved",
+    "visitApprovedBody": "{site} is expecting you on the date below.",
+    "visitRejectedSubject": "Your visit request to {site}",
+    "visitRejectedTitle": "Visit request declined",
+    "visitRejectedBody": "{site} could not take this request.",
+    "verifiedSubject": "{site} is now verified",
+    "verifiedTitle": "Your site is verified",
+    "verifiedBody": "{site} passed review and now carries the verified badge.",
+    "verificationRejectedSubject": "Verification for {site}",
+    "verificationRejectedTitle": "Verification did not pass",
+    "verificationRejectedBody": "{site} was reviewed but could not be verified yet. You can fix the points below and ask again."
   }
 }

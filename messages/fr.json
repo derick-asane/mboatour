@@ -49,7 +49,18 @@
     "noAccount": "Pas encore de compte ?",
     "hasAccount": "Vous avez déjà un compte ?",
     "continueWith": "Continuer avec {provider}",
-    "orUseEmail": "ou utilisez votre e-mail"
+    "orUseEmail": "ou utilisez votre e-mail",
+    "forgotLink": "Mot de passe oublié ?",
+    "forgotTitle": "Réinitialiser votre mot de passe",
+    "forgotSubtitle": "Nous vous enverrons un lien pour en choisir un nouveau.",
+    "forgotHint": "L’adresse avec laquelle vous vous connectez.",
+    "forgotCta": "Envoyer le lien",
+    "backToSignIn": "Retour à la connexion",
+    "resetTitle": "Choisissez un nouveau mot de passe",
+    "resetSubtitle": "Choisissez quelque chose que vous seul connaissez.",
+    "resetCta": "Enregistrer le nouveau mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "resetLinkInvalid": "Ce lien a expiré ou a déjà été utilisé."
   },
   "Home": {
     "heroTitle": "Trouvez votre prochaine destination",
@@ -262,7 +273,8 @@
     "verificationRequested": "Vérification demandée. L’équipe de la plateforme l’examinera.",
     "adminUpdated": "Administrateur mis à jour.",
     "profileUpdated": "Profil mis à jour.",
-    "passwordUpdated": "Mot de passe modifié."
+    "passwordUpdated": "Mot de passe modifié.",
+    "resetLinkSent": "Si ce compte existe, un lien de réinitialisation est en route."
   },
   "Errors": {
     "invalidInput": "Veuillez vérifier les champs signalés.",
@@ -297,7 +309,8 @@
     "alreadyVerified": "Ce site est déjà vérifié.",
     "cannotDemoteSelf": "Vous ne pouvez pas retirer votre propre rôle de super administrateur.",
     "wrongPassword": "Le mot de passe actuel est incorrect.",
-    "newPassword": "Utilisez au moins 8 caractères."
+    "newPassword": "Utilisez au moins 8 caractères.",
+    "resetLinkInvalid": "Ce lien a expiré ou a déjà été utilisé."
   },
   "Categories": {
     "MUSEUM": "Musée",
@@ -410,5 +423,49 @@
     "openExternally": "Ouvrir dans votre application de cartes",
     "back": "Retour",
     "openMap": "Ouvrir la carte"
+  },
+  "Email": {
+    "footer": "Envoyé par {appName}.",
+    "factEvent": "Événement",
+    "factWhen": "Quand",
+    "factSeats": "Places",
+    "factPeople": "Personnes",
+    "factReference": "Référence",
+    "viewBookings": "Voir vos réservations",
+    "viewSite": "Voir le site",
+    "reviewCta": "Examiner",
+    "manageCta": "Ouvrir votre site",
+    "resetSubject": "Réinitialiser votre mot de passe",
+    "resetTitle": "Réinitialiser votre mot de passe",
+    "resetBody": "Utilisez le lien ci-dessous pour choisir un nouveau mot de passe. Il ne sert qu’une fois et expire dans {minutes} minutes.",
+    "resetIgnore": "Si vous n’avez rien demandé, ignorez ce message. Votre mot de passe reste inchangé.",
+    "resetCta": "Choisir un nouveau mot de passe",
+    "bookingCreatedSubject": "Votre réservation pour {event}",
+    "bookingCreatedTitle": "Réservation reçue",
+    "bookingCreatedBody": "Merci. {site} a votre réservation et la confirmera sous peu. Conservez la référence ci-dessous.",
+    "bookingTeamSubject": "Nouvelle réservation pour {event}",
+    "bookingTeamTitle": "Une nouvelle réservation est arrivée",
+    "bookingTeamBody": "Quelqu’un a réservé un événement à {site} et attend votre confirmation.",
+    "bookingConfirmedSubject": "Votre réservation pour {event} est confirmée",
+    "bookingConfirmedTitle": "Réservation confirmée",
+    "bookingConfirmedBody": "{site} a confirmé votre réservation. Présentez la référence ci-dessous à votre arrivée.",
+    "bookingCancelledSubject": "Votre réservation pour {event} a été annulée",
+    "bookingCancelledTitle": "Réservation annulée",
+    "bookingCancelledBody": "{site} a annulé cette réservation. Contactez-les si cela vous semble erroné.",
+    "visitTeamSubject": "Nouvelle demande de visite pour {site}",
+    "visitTeamTitle": "Une demande de visite est arrivée",
+    "visitTeamBody": "{name} a demandé à visiter et attend votre réponse.",
+    "visitApprovedSubject": "Votre visite à {site} est approuvée",
+    "visitApprovedTitle": "Visite approuvée",
+    "visitApprovedBody": "{site} vous attend à la date ci-dessous.",
+    "visitRejectedSubject": "Votre demande de visite à {site}",
+    "visitRejectedTitle": "Demande de visite refusée",
+    "visitRejectedBody": "{site} n’a pas pu accepter cette demande.",
+    "verifiedSubject": "{site} est maintenant vérifié",
+    "verifiedTitle": "Votre site est vérifié",
+    "verifiedBody": "{site} a passé l’examen et porte désormais le badge vérifié.",
+    "verificationRejectedSubject": "Vérification de {site}",
+    "verificationRejectedTitle": "La vérification n’a pas abouti",
+    "verificationRejectedBody": "{site} a été examiné mais n’a pas pu être vérifié pour le moment. Corrigez les points ci-dessous et redemandez."
   }
 }

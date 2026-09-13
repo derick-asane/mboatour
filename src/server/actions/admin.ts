@@ -8,6 +8,7 @@ import type { PlatformRole } from "@/generated/prisma/enums";
 import { canManageAdmins } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
 import { failure, type ActionState } from "@/server/action-state";
+import { sendVerificationDecisionEmail } from "@/server/email/notify";
 import {
   PermissionError,
   requirePermission,
@@ -47,7 +48,11 @@ export async function decideSiteVerificationAction(
 
   const site = await prisma.touristicSite.findUnique({
     where: { id: siteId },
-    select: { slug: true },
+    select: {
+      slug: true,
+      name: true,
+      createdBy: { select: { email: true, locale: true } },
+    },
   });
 
   if (!site) return failure("siteNotFound");
@@ -61,6 +66,14 @@ export async function decideSiteVerificationAction(
       verifiedById: decision === "VERIFIED" ? admin.id : null,
     },
   });
+
+  await sendVerificationDecisionEmail(
+    site.createdBy,
+    site.name,
+    site.slug,
+    decision,
+    note,
+  );
 
   const locale = await getLocale();
   revalidatePath(`/${locale}/admin/sites`);

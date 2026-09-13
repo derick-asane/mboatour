@@ -7,6 +7,10 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { bookingReference } from "@/lib/slug";
 import { failure, type ActionState } from "@/server/action-state";
+import {
+  sendBookingCreatedEmails,
+  sendBookingDecisionEmail,
+} from "@/server/email/notify";
 import { PermissionError, requirePermission, requireUser } from "@/server/session";
 
 const bookingSchema = z.object({
@@ -49,7 +53,9 @@ export async function bookEventAction(
       status: true,
       capacity: true,
       startsAt: true,
-      site: { select: { slug: true } },
+      title: true,
+      siteId: true,
+      site: { select: { slug: true, name: true } },
     },
   });
 
@@ -108,6 +114,26 @@ export async function bookEventAction(
   revalidatePath(`/${locale}/sites/${event.site.slug}`);
   revalidatePath(`/${locale}/dashboard`);
 
+  const saved = await prisma.booking.findUnique({
+    where: { eventId_userId: { eventId, userId: user.id } },
+    select: { reference: true, user: { select: { email: true, locale: true } } },
+  });
+
+  if (saved) {
+    await sendBookingCreatedEmails(
+      saved.user,
+      {
+        siteName: event.site.name,
+        siteSlug: event.site.slug,
+        eventTitle: event.title,
+        startsAt: event.startsAt.toISOString().slice(0, 16).replace("T", " "),
+        seats,
+        reference: saved.reference,
+      },
+      event.siteId,
+    );
+  }
+
   return { success: "bookingCreated" };
 }
 
@@ -153,8 +179,17 @@ export async function decideBookingAction(
     where: { id: bookingId },
     select: {
       id: true,
+      seats: true,
+      reference: true,
+      user: { select: { email: true, locale: true } },
       event: {
-        select: { id: true, siteId: true, site: { select: { slug: true } } },
+        select: {
+          id: true,
+          siteId: true,
+          title: true,
+          startsAt: true,
+          site: { select: { slug: true, name: true } },
+        },
       },
     },
   });
@@ -172,6 +207,19 @@ export async function decideBookingAction(
     where: { id: bookingId },
     data: { status: decision as "CONFIRMED" | "CANCELLED" | "PENDING" },
   });
+
+  await sendBookingDecisionEmail(
+    booking.user,
+    {
+      siteName: booking.event.site.name,
+      siteSlug: booking.event.site.slug,
+      eventTitle: booking.event.title,
+      startsAt: booking.event.startsAt.toISOString().slice(0, 16).replace("T", " "),
+      seats: booking.seats,
+      reference: booking.reference,
+    },
+    decision as "CONFIRMED" | "CANCELLED" | "PENDING",
+  );
 
   const locale = await getLocale();
   revalidatePath(

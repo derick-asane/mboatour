@@ -18,6 +18,14 @@ import {
   fieldFailure,
   type ActionState,
 } from "@/server/action-state";
+import { appUrl } from "@/server/email/send";
+import { sendPasswordResetEmail } from "@/server/email/notify";
+import {
+  consumePasswordResetTokens,
+  createPasswordResetToken,
+  resolvePasswordResetToken,
+  RESET_TOKEN_TTL_MINUTES,
+} from "@/server/password-reset";
 import { requireUser } from "@/server/session";
 
 const registerSchema = z.object({
@@ -223,6 +231,70 @@ export async function changePasswordAction(
     where: { id: user.id },
     data: { passwordHash: await bcrypt.hash(parsed.data.newPassword, 12) },
   });
+
+  return { success: "passwordUpdated" };
+}
+
+const forgotSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+});
+
+/// Sends a reset link. The reply never reveals whether an account exists, so
+/// this cannot be used to discover who is registered.
+export async function requestPasswordResetAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = forgotSchema.safeParse({ email: formData.get("email") });
+
+  if (!parsed.success) return failure("invalidEmail");
+
+  const user = await prisma.user.findUnique({
+    where: { email: parsed.data.email },
+    select: { id: true, email: true, locale: true },
+  });
+
+  if (user) {
+    const token = await createPasswordResetToken(user.id);
+    const locale = user.locale || (await getLocale());
+
+    await sendPasswordResetEmail(
+      user,
+      appUrl(`/${locale}/reset?token=${token}`),
+      RESET_TOKEN_TTL_MINUTES,
+    );
+  }
+
+  return { success: "resetLinkSent" };
+}
+
+const resetSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8).max(200),
+});
+
+/// Sets a new password from a reset link and spends the link.
+export async function resetPasswordAction(
+  _previous: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const parsed = resetSchema.safeParse({
+    token: formData.get("token"),
+    password: formData.get("password"),
+  });
+
+  if (!parsed.success) return fieldFailure({ password: "newPassword" });
+
+  const resolved = await resolvePasswordResetToken(parsed.data.token);
+
+  if (!resolved) return failure("resetLinkInvalid");
+
+  await prisma.user.update({
+    where: { id: resolved.userId },
+    data: { passwordHash: await bcrypt.hash(parsed.data.password, 12) },
+  });
+
+  await consumePasswordResetTokens(resolved.userId);
 
   return { success: "passwordUpdated" };
 }
