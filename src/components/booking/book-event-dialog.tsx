@@ -189,12 +189,16 @@ export function BookEventDialog({
               {needsCard(method) ? (
                 <div className="space-y-3">
                   {/* The number stays in the browser: only the last four digits
-                      are submitted, so no card number reaches our server. */}
+                      are submitted, so no card number reaches our server.
+                      Autofill is switched off rather than hinted with cc-*:
+                      browsers refuse payment autofill over plain http and say
+                      so on the field, and a real gateway brings its own hosted
+                      inputs anyway. */}
                   <Field label={t("cardNumber")}>
                     <input
                       className="input"
                       inputMode="numeric"
-                      autoComplete="cc-number"
+                      autoComplete="off"
                       placeholder="4242 4242 4242 4242"
                       value={card}
                       onChange={(event) => setCard(event.target.value)}
@@ -205,14 +209,14 @@ export function BookEventDialog({
                     <Field label={t("cardExpiry")}>
                       <input
                         className="input"
-                        autoComplete="cc-exp"
+                        autoComplete="off"
                         placeholder="MM/YY"
                       />
                     </Field>
                     <Field label={t("cardCvc")}>
                       <input
                         className="input"
-                        autoComplete="cc-csc"
+                        autoComplete="off"
                         inputMode="numeric"
                         placeholder="123"
                       />
