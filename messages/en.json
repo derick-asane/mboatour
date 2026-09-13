@@ -511,7 +511,9 @@
     "cancelEdit": "Cancel",
     "editedMark": "(edited)",
     "editWindowClosed": "Messages can only be edited within {minutes} minutes of sending.",
-    "notYourMessage": "You can only edit your own messages."
+    "notYourMessage": "You can only edit your own messages.",
+    "yourChats": "Your chats",
+    "closedShort": "Closed"
   },
   "Booking": {
     "title": "Book this event",

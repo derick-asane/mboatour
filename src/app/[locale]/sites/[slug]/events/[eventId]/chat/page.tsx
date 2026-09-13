@@ -2,11 +2,17 @@ import { getFormatter, getTranslations, setRequestLocale } from "next-intl/serve
 import { notFound } from "next/navigation";
 
 import { Participants } from "@/app/[locale]/sites/[slug]/events/[eventId]/chat/participants";
+import { ChatList } from "@/components/chat/chat-list";
 import { ChatRoom } from "@/components/chat/chat-room";
 import { CoverImage } from "@/components/cover-image";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
-import { chatClosesAt, listMessages, loadChatAccess } from "@/server/chat";
+import {
+  chatClosesAt,
+  listMessages,
+  listMyChats,
+  loadChatAccess,
+} from "@/server/chat";
 
 export default async function EventChatPage({
   params,
@@ -24,8 +30,9 @@ export default async function EventChatPage({
   const t = await getTranslations("Chat");
   const format = await getFormatter();
 
-  const [messages, attendees, team, mutes] = await Promise.all([
+  const [messages, myChats, attendees, team, mutes] = await Promise.all([
     listMessages(eventId),
+    listMyChats(access.user.id),
     prisma.booking.findMany({
       where: { eventId, status: { not: "CANCELLED" } },
       select: { user: { select: { id: true, name: true, email: true } } },
@@ -99,7 +106,9 @@ export default async function EventChatPage({
         </p>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_15rem]">
+        <ChatList chats={myChats} activeEventId={eventId} />
+
         <div className="h-[32rem] lg:h-[36rem]">
           <ChatRoom
             eventId={eventId}
@@ -112,11 +121,13 @@ export default async function EventChatPage({
           />
         </div>
 
-        <Participants
-          eventId={eventId}
-          participants={participants}
-          canModerate={access.isTeam}
-        />
+        <div className="lg:col-span-2 xl:col-span-1">
+          <Participants
+            eventId={eventId}
+            participants={participants}
+            canModerate={access.isTeam}
+          />
+        </div>
       </div>
     </div>
   );
