@@ -135,6 +135,13 @@ p {
   outline-offset: 2px;
 }
 
+/* A modal dialog is centred by the browser through `margin: auto`, which
+   Tailwind preflight zeroes along with every other margin. Putting it back is
+   what keeps a dialog in the middle of the viewport instead of the top left. */
+dialog {
+  margin: auto;
+}
+
 /* Native controls pick up the brand colour instead of the OS blue. */
 input[type="checkbox"],
 input[type="radio"] {
