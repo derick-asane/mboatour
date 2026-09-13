@@ -1,4 +1,5 @@
 import { CHAT_GRACE_DAYS, MAX_MESSAGE_LENGTH } from "@/lib/chat-limits";
+import { isPlatformAdmin } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser, type SessionUser } from "@/server/session";
 
@@ -73,7 +74,12 @@ export async function loadChatAccess(
 
   // A cancelled booking is not a seat, so it is not a place in the chat.
   const attending = booking !== null && booking.status !== "CANCELLED";
-  const isTeam = membership !== null;
+
+  // Platform admins hold no seat on any site, which is right for verifying a
+  // site but wrong here: chat is where strangers talk unsupervised, and the
+  // platform team is who gets called when it goes wrong. They moderate on the
+  // same terms as the site team.
+  const isTeam = membership !== null || isPlatformAdmin(user.platformRole);
 
   if (!attending && !isTeam) return null;
 
