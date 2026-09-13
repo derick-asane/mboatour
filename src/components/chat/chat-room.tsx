@@ -9,6 +9,7 @@ import {
   MAX_MESSAGE_LENGTH,
   MESSAGE_EDIT_WINDOW_MINUTES,
 } from "@/lib/chat-limits";
+import { ACCEPTED_IMAGE_TYPES } from "@/lib/upload-limits";
 import {
   deleteMessageAction,
   editMessageAction,
@@ -24,6 +25,7 @@ type Message = {
   authorName: string;
   removed: boolean;
   edited: boolean;
+  attachmentUrl: string | null;
 };
 
 /// How often the room asks for new messages. Short enough to feel live, long
@@ -63,6 +65,8 @@ export function ChatRoom({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [picture, setPicture] = useState<File | null>(null);
+  const pictureRef = useRef<HTMLInputElement>(null);
   // Ticks while a message is being written, so the edit link disappears on its
   // own when the window runs out rather than at the next poll.
   const [now, setNow] = useState(() => Date.now());
@@ -126,6 +130,7 @@ export function ChatRoom({
     }
 
     formRef.current?.reset();
+    setPicture(null);
     pinnedToBottom.current = true;
     await refresh();
   }
@@ -226,6 +231,22 @@ export function ChatRoom({
                           : "border-line bg-surface"
                       }`}
                     >
+                      {message.attachmentUrl ? (
+                        <a
+                          href={message.attachmentUrl}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="mb-1.5 block"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={message.attachmentUrl}
+                            alt=""
+                            loading="lazy"
+                            className="media-placeholder max-h-56 w-full max-w-64 rounded-lg border border-line object-cover"
+                          />
+                        </a>
+                      ) : null}
                       {message.body}
                       {message.edited ? (
                         <span className="ml-1.5 text-xs text-faint">
@@ -277,20 +298,69 @@ export function ChatRoom({
       ) : null}
 
       {canPost ? (
-        <form ref={formRef} action={submit} className="flex items-end gap-2">
+        <form ref={formRef} action={submit} className="space-y-2">
           <input type="hidden" name="eventId" value={eventId} />
-          <label className="flex-1">
-            <span className="sr-only">{t("placeholder")}</span>
+
+          {picture ? (
+            <p className="flex items-center gap-2 text-xs text-muted">
+              <span className="truncate">{picture.name}</span>
+              <button
+                type="button"
+                className="text-faint hover:text-danger"
+                onClick={() => {
+                  setPicture(null);
+                  if (pictureRef.current) pictureRef.current.value = "";
+                }}
+              >
+                {t("removeAttachment")}
+              </button>
+            </p>
+          ) : null}
+
+          <div className="flex items-end gap-2">
             <input
-              className="input"
-              name="body"
-              maxLength={MAX_MESSAGE_LENGTH}
-              placeholder={t("placeholder")}
-              autoComplete="off"
-              required
+              ref={pictureRef}
+              type="file"
+              name="attachment"
+              accept={ACCEPTED_IMAGE_TYPES.join(",")}
+              className="sr-only"
+              onChange={(event) => setPicture(event.target.files?.[0] ?? null)}
             />
-          </label>
-          <SendButton label={t("send")} />
+
+            <button
+              type="button"
+              className="btn-secondary btn-sm shrink-0"
+              onClick={() => pictureRef.current?.click()}
+              aria-label={t("attach")}
+              title={t("attach")}
+            >
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+              >
+                <path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l8-8a3.5 3.5 0 1 1 5 5l-8 8a2 2 0 0 1-3-3l7.5-7.5" />
+              </svg>
+            </button>
+
+            <label className="flex-1">
+              <span className="sr-only">{t("placeholder")}</span>
+              <input
+                className="input"
+                name="body"
+                maxLength={MAX_MESSAGE_LENGTH}
+                placeholder={t("placeholder")}
+                autoComplete="off"
+              />
+            </label>
+
+            <SendButton label={t("send")} />
+          </div>
         </form>
       ) : (
         <p className="alert">{closed ? t("closed") : muted ? t("muted") : t("readOnly")}</p>

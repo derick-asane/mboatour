@@ -6,11 +6,16 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { failure, type ActionState } from "@/server/action-state";
 import { editWindowOpen } from "@/lib/chat-limits";
+import {
+  deleteUploadedImage,
+  isUploadedFile,
+  saveUploadedImage,
+} from "@/lib/uploads";
 import { loadChatAccess, MAX_MESSAGE_LENGTH } from "@/server/chat";
 
 const messageSchema = z.object({
   eventId: z.string().min(1),
-  body: z.string().trim().min(1).max(MAX_MESSAGE_LENGTH),
+  body: z.string().trim().max(MAX_MESSAGE_LENGTH),
 });
 
 export async function postMessageAction(
@@ -30,11 +35,27 @@ export async function postMessageAction(
   if (access.closed) return failure("chatClosed");
   if (access.muted) return failure("chatMuted");
 
+  const picture = formData.get("attachment");
+  let attachmentUrl: string | null = null;
+
+  // Uploaded only once the sender is known to be allowed to post, so a refused
+  // message never leaves a file behind.
+  if (isUploadedFile(picture)) {
+    const saved = await saveUploadedImage(picture, "chat");
+
+    if ("error" in saved) return failure(saved.error);
+
+    attachmentUrl = saved.url;
+  }
+
+  if (!parsed.data.body && !attachmentUrl) return failure("messageEmpty");
+
   await prisma.eventMessage.create({
     data: {
       eventId: parsed.data.eventId,
       userId: access.user.id,
       body: parsed.data.body,
+      attachmentUrl,
     },
   });
 
@@ -53,7 +74,13 @@ export async function deleteMessageAction(
 
   const message = await prisma.eventMessage.findUnique({
     where: { id: messageId },
-    select: { id: true, userId: true, eventId: true, deletedAt: true },
+    select: {
+      id: true,
+      userId: true,
+      eventId: true,
+      deletedAt: true,
+      attachmentUrl: true,
+    },
   });
 
   if (!message) return failure("messageNotFound");
@@ -71,6 +98,10 @@ export async function deleteMessageAction(
     where: { id: messageId },
     data: { deletedAt: new Date(), deletedById: access.user.id },
   });
+
+  // The row stays for the audit trail, but the picture must stop being
+  // reachable: everything under the upload folder is served publicly.
+  if (message.attachmentUrl) await deleteUploadedImage(message.attachmentUrl);
 
   revalidatePath(`/sites/${access.event.siteSlug}/events/${access.event.id}/chat`);
 

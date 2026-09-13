@@ -513,7 +513,9 @@
     "editWindowClosed": "Un message ne peut être modifié que dans les {minutes} minutes suivant son envoi.",
     "notYourMessage": "Vous ne pouvez modifier que vos propres messages.",
     "yourChats": "Vos discussions",
-    "closedShort": "Fermée"
+    "closedShort": "Fermée",
+    "attach": "Joindre une image",
+    "removeAttachment": "Retirer"
   },
   "Booking": {
     "title": "Réserver cet événement",

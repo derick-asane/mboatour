@@ -118,6 +118,7 @@ export type ChatMessage = {
   /// Set when a moderator removed it; the body is replaced before sending.
   removed: boolean;
   edited: boolean;
+  attachmentUrl: string | null;
 };
 
 /// The most recent slice of a chat, returned oldest-first for display. The
@@ -137,6 +138,7 @@ export async function listMessages(eventId: string): Promise<ChatMessage[]> {
       createdAt: true,
       deletedAt: true,
       editedAt: true,
+      attachmentUrl: true,
       userId: true,
       user: { select: { name: true, email: true } },
     },
@@ -152,6 +154,8 @@ export async function listMessages(eventId: string): Promise<ChatMessage[]> {
     authorName: message.user.name ?? message.user.email.split("@")[0],
     removed: message.deletedAt !== null,
     edited: message.editedAt !== null,
+    // A removed message gives up its picture along with its words.
+    attachmentUrl: message.deletedAt ? null : message.attachmentUrl,
   }));
 }
 
