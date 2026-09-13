@@ -59,7 +59,7 @@ export async function bookEventAction(
     attendeePhone: formData.get("attendeePhone"),
     note: formData.get("note") ?? undefined,
     method: formData.get("method") ?? undefined,
-    payerPhone: formData.get("payerPhone") ?? undefined,
+    payerPhone: formData.get("payerPhone") || undefined,
     cardLast4: formData.get("cardLast4") || undefined,
   });
 
@@ -106,7 +106,7 @@ export async function bookEventAction(
   let payerPhone: string | null = null;
 
   if (method && needsPhone(method)) {
-    payerPhone = normalisePhone(parsed.data.payerPhone ?? attendeePhone);
+    payerPhone = normalisePhone(parsed.data.payerPhone || attendeePhone);
 
     if (!payerPhone) return failure("invalidPhone");
   }
