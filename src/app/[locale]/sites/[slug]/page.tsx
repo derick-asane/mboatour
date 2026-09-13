@@ -9,6 +9,7 @@ import { SiteLocationCard } from "@/components/map/site-location-card";
 import { StatusBadge } from "@/components/status-badge";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Link } from "@/i18n/navigation";
+import { openEventWhere } from "@/lib/events";
 import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser, getMembership } from "@/server/session";
@@ -45,7 +46,8 @@ export default async function SiteDetailPage({
     where: {
       siteId: site.id,
       status: "PUBLISHED",
-      startsAt: { gte: new Date() },
+      // Visible until it ends, so an event in progress stays bookable.
+      ...openEventWhere(),
     },
     orderBy: { startsAt: "asc" },
     include: {

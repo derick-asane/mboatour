@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/empty-state";
 import { SectionHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { Link } from "@/i18n/navigation";
+import { hasEnded, isRunning } from "@/lib/events";
 import { can } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { loadManagedSite } from "@/server/manage";
@@ -84,6 +85,14 @@ export default async function ManageEventsPage({
                   {bookingsT("title")}: {event._count.bookings}
                 </p>
               </div>
+
+              {hasEnded(event) ? (
+                <span className="badge" title={eventsT("endedHint")}>
+                  {eventsT("ended")}
+                </span>
+              ) : isRunning(event) ? (
+                <span className="badge badge-warning">{eventsT("running")}</span>
+              ) : null}
 
               <StatusBadge status={event.status} />
 

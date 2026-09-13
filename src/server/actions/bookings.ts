@@ -4,6 +4,7 @@ import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { hasEnded } from "@/lib/events";
 import { prisma } from "@/lib/prisma";
 import { bookingReference } from "@/lib/slug";
 import { failure, type ActionState } from "@/server/action-state";
@@ -53,6 +54,7 @@ export async function bookEventAction(
       status: true,
       capacity: true,
       startsAt: true,
+      endsAt: true,
       title: true,
       siteId: true,
       site: { select: { slug: true, name: true } },
@@ -61,7 +63,8 @@ export async function bookEventAction(
 
   if (!event) return failure("eventNotFound");
   if (event.status !== "PUBLISHED") return failure("eventNotBookable");
-  if (event.startsAt.getTime() < Date.now()) return failure("eventPast");
+  // Only a finished event is too late to book.
+  if (hasEnded(event)) return failure("eventPast");
 
   try {
     await prisma.$transaction(async (tx) => {

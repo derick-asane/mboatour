@@ -145,7 +145,10 @@
     "endsAt": "Fin",
     "price": "Prix",
     "alreadyBooked": "Vous avez réservé cet événement.",
-    "empty": "Aucun événement pour le moment."
+    "empty": "Aucun événement pour le moment.",
+    "running": "En cours",
+    "ended": "Terminé",
+    "endedHint": "Les événements terminés ne sont plus listés pour les visiteurs."
   },
   "EventForm": {
     "createTitle": "Nouvel événement",

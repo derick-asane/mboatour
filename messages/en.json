@@ -145,7 +145,10 @@
     "endsAt": "Ends",
     "price": "Price",
     "alreadyBooked": "You have booked this event.",
-    "empty": "No event yet."
+    "empty": "No event yet.",
+    "running": "In progress",
+    "ended": "Ended",
+    "endedHint": "Finished events are no longer listed for visitors."
   },
   "EventForm": {
     "createTitle": "New event",

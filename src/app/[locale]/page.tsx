@@ -4,6 +4,7 @@ import { CoverImage } from "@/components/cover-image";
 import { SectionHeader } from "@/components/page-header";
 import { SiteCard } from "@/components/site-card";
 import { Link } from "@/i18n/navigation";
+import { openEventWhere } from "@/lib/events";
 import { prisma } from "@/lib/prisma";
 
 export default async function HomePage({
@@ -24,7 +25,7 @@ export default async function HomePage({
     include: {
       _count: {
         select: {
-          events: { where: { status: "PUBLISHED", startsAt: { gte: new Date() } } },
+          events: { where: { status: "PUBLISHED", ...openEventWhere() } },
         },
       },
     },
