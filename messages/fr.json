@@ -522,7 +522,6 @@
     "payerPhone": "Numéro mobile money",
     "payerPhoneHint": "Laissez vide pour utiliser le numéro ci-dessus.",
     "cardNumber": "Numéro de carte",
-    "cardHint": "Seuls les quatre derniers chiffres nous sont transmis.",
     "cardExpiry": "Expiration",
     "cardCvc": "CVC",
     "payNow": "Payer {amount}",

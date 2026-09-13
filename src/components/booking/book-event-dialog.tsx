@@ -192,7 +192,7 @@ export function BookEventDialog({
                 <div className="space-y-3">
                   {/* The number stays in the browser: only the last four digits
                       are submitted, so no card number reaches our server. */}
-                  <Field label={t("cardNumber")} hint={t("cardHint")}>
+                  <Field label={t("cardNumber")}>
                     <input
                       className="input"
                       inputMode="numeric"
