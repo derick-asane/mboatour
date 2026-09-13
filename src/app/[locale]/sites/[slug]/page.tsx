@@ -24,6 +24,7 @@ export default async function SiteDetailPage({
   const t = await getTranslations("Site");
   const eventsT = await getTranslations("Events");
   const common = await getTranslations("Common");
+  const chatT = await getTranslations("Chat");
   const categories = await getTranslations("Categories");
   const format = await getFormatter();
 
@@ -339,9 +340,17 @@ export default async function SiteDetailPage({
                       ) : null}
 
                       {alreadyBooked ? (
-                        <p className="alert alert-success">
-                          {eventsT("alreadyBooked")}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="alert alert-success flex-1">
+                            {eventsT("alreadyBooked")}
+                          </p>
+                          <Link
+                            href={`/sites/${site.slug}/events/${event.id}/chat`}
+                            className="btn-secondary btn-sm"
+                          >
+                            {chatT("openChat")}
+                          </Link>
+                        </div>
                       ) : seatsLeft === 0 ? (
                         <p className="alert alert-error">{eventsT("full")}</p>
                       ) : user ? (

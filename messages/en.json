@@ -274,7 +274,10 @@
     "adminUpdated": "Administrator updated.",
     "profileUpdated": "Profile updated.",
     "passwordUpdated": "Password changed.",
-    "resetLinkSent": "If that account exists, a reset link is on its way."
+    "resetLinkSent": "If that account exists, a reset link is on its way.",
+    "messageRemoved": "Message removed.",
+    "participantMuted": "Participant muted.",
+    "participantUnmuted": "Participant can post again."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -467,5 +470,33 @@
     "verificationRejectedSubject": "Verification for {site}",
     "verificationRejectedTitle": "Verification did not pass",
     "verificationRejectedBody": "{site} was reviewed but could not be verified yet. You can fix the points below and ask again."
+  },
+  "Chat": {
+    "eyebrow": "Event chat",
+    "backToSite": "Back to the site",
+    "empty": "No messages yet. Say hello.",
+    "placeholder": "Write a message",
+    "send": "Send",
+    "you": "You",
+    "remove": "Remove",
+    "removed": "Message removed",
+    "readOnly": "You cannot post in this chat.",
+    "closed": "This chat is closed. You can still read what was said.",
+    "closedNotice": "This chat is closed. You can still read what was said.",
+    "muted": "An organiser muted you in this chat. You can still read it.",
+    "openUntil": "Open for messages until {date}.",
+    "participants": "{count, plural, =1 {# person} other {# people}}",
+    "organiser": "Organiser",
+    "attendee": "Attendee",
+    "mutedLabel": "muted",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "openChat": "Open the chat",
+    "chatClosed": "This chat is closed.",
+    "chatMuted": "An organiser muted you in this chat.",
+    "messageEmpty": "Write something first.",
+    "messageNotFound": "That message is gone.",
+    "forbidden": "You are not in this chat.",
+    "cannotMuteSelf": "You cannot mute yourself."
   }
 }

@@ -274,7 +274,10 @@
     "adminUpdated": "Administrateur mis à jour.",
     "profileUpdated": "Profil mis à jour.",
     "passwordUpdated": "Mot de passe modifié.",
-    "resetLinkSent": "Si ce compte existe, un lien de réinitialisation est en route."
+    "resetLinkSent": "Si ce compte existe, un lien de réinitialisation est en route.",
+    "messageRemoved": "Message retiré.",
+    "participantMuted": "Participant rendu silencieux.",
+    "participantUnmuted": "Le participant peut de nouveau écrire."
   },
   "Errors": {
     "invalidInput": "Veuillez vérifier les champs signalés.",
@@ -467,5 +470,33 @@
     "verificationRejectedSubject": "Vérification de {site}",
     "verificationRejectedTitle": "La vérification n’a pas abouti",
     "verificationRejectedBody": "{site} a été examiné mais n’a pas pu être vérifié pour le moment. Corrigez les points ci-dessous et redemandez."
+  },
+  "Chat": {
+    "eyebrow": "Discussion de l’événement",
+    "backToSite": "Retour au site",
+    "empty": "Aucun message pour l’instant. Dites bonjour.",
+    "placeholder": "Écrire un message",
+    "send": "Envoyer",
+    "you": "Vous",
+    "remove": "Retirer",
+    "removed": "Message retiré",
+    "readOnly": "Vous ne pouvez pas écrire dans cette discussion.",
+    "closed": "Cette discussion est fermée. Vous pouvez toujours la lire.",
+    "closedNotice": "Cette discussion est fermée. Vous pouvez toujours la lire.",
+    "muted": "Un organisateur vous a réduit au silence ici. Vous pouvez toujours lire.",
+    "openUntil": "Ouverte aux messages jusqu’au {date}.",
+    "participants": "{count, plural, =1 {# personne} other {# personnes}}",
+    "organiser": "Organisateur",
+    "attendee": "Participant",
+    "mutedLabel": "silencieux",
+    "mute": "Rendre silencieux",
+    "unmute": "Rétablir",
+    "openChat": "Ouvrir la discussion",
+    "chatClosed": "Cette discussion est fermée.",
+    "chatMuted": "Un organisateur vous a réduit au silence ici.",
+    "messageEmpty": "Écrivez d’abord quelque chose.",
+    "messageNotFound": "Ce message n’existe plus.",
+    "forbidden": "Vous ne faites pas partie de cette discussion.",
+    "cannotMuteSelf": "Vous ne pouvez pas vous rendre silencieux."
   }
 }

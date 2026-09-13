@@ -20,6 +20,7 @@ export default async function DashboardPage({
   const t = await getTranslations("Dashboard");
   const members = await getTranslations("Members");
   const sitesT = await getTranslations("Sites");
+  const chat = await getTranslations("Chat");
   const format = await getFormatter();
 
   const [memberships, bookings, visitRequests] = await Promise.all([
@@ -34,8 +35,10 @@ export default async function DashboardPage({
       include: {
         event: {
           select: {
+            id: true,
             title: true,
             startsAt: true,
+            endsAt: true,
             site: { select: { name: true, slug: true } },
           },
         },
@@ -150,7 +153,15 @@ export default async function DashboardPage({
                 </div>
                 <StatusBadge status={booking.status} />
                 {booking.status !== "CANCELLED" ? (
-                  <CancelBookingButton bookingId={booking.id} />
+                  <>
+                    <Link
+                      href={`/sites/${booking.event.site.slug}/events/${booking.event.id}/chat`}
+                      className="btn-secondary btn-sm"
+                    >
+                      {chat("openChat")}
+                    </Link>
+                    <CancelBookingButton bookingId={booking.id} />
+                  </>
                 ) : null}
               </li>
             ))}
