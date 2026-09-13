@@ -317,7 +317,7 @@ export function ChatRoom({
             </p>
           ) : null}
 
-          <div className="flex items-end gap-2">
+          <div className="flex items-stretch gap-2">
             <input
               ref={pictureRef}
               type="file"
@@ -329,7 +329,7 @@ export function ChatRoom({
 
             <button
               type="button"
-              className="btn-secondary btn-sm shrink-0"
+              className="btn-secondary shrink-0"
               onClick={() => pictureRef.current?.click()}
               aria-label={t("attach")}
               title={t("attach")}
