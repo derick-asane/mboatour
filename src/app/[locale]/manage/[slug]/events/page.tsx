@@ -22,6 +22,7 @@ export default async function ManageEventsPage({
   const eventsT = await getTranslations("Events");
   const formT = await getTranslations("EventForm");
   const bookingsT = await getTranslations("Bookings");
+  const chatT = await getTranslations("Chat");
   const format = await getFormatter();
 
   const mayCreate = can(membership, "MANAGE_EVENTS");
@@ -95,6 +96,15 @@ export default async function ManageEventsPage({
               ) : null}
 
               <StatusBadge status={event.status} />
+
+              {/* The team holds no booking, so the chat link has to live
+                  where they actually work rather than on a booking row. */}
+              <Link
+                href={`/sites/${slug}/events/${event.id}/chat`}
+                className="btn-secondary btn-sm"
+              >
+                {chatT("openChat")}
+              </Link>
 
               <Link
                 href={`/manage/${slug}/events/${event.id}`}

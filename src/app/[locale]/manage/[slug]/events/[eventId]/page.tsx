@@ -9,6 +9,7 @@ import {
 import { EmptyState } from "@/components/empty-state";
 import { SectionHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
+import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
 import { can } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
@@ -61,6 +62,7 @@ export default async function ManageEventPage({
   const format = await getFormatter();
   const payments = await getTranslations("Payment");
   const bookingT = await getTranslations("Booking");
+  const chatT = await getTranslations("Chat");
 
   const bookedSeats = event.bookings
     .filter((booking) => booking.status !== "CANCELLED")
@@ -96,9 +98,17 @@ export default async function ManageEventPage({
           <SectionHeader
             title={t("title")}
             actions={
-              <span className="badge badge-accent">
-                {t("totalSeats", { count: bookedSeats })}
-              </span>
+              <>
+                <span className="badge badge-accent">
+                  {t("totalSeats", { count: bookedSeats })}
+                </span>
+                <Link
+                  href={`/sites/${slug}/events/${eventId}/chat`}
+                  className="btn-secondary btn-sm"
+                >
+                  {chatT("openChat")}
+                </Link>
+              </>
             }
           />
 
