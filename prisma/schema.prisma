@@ -1,0 +1,290 @@
+// Mboatour — touristic sites, events and visits.
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+/// Authority over the whole platform, separate from any single site.
+enum PlatformRole {
+  MEMBER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum SiteVerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum SiteRole {
+  OWNER
+  ADMIN
+}
+
+enum SitePermission {
+  MANAGE_SITE
+  MANAGE_EVENTS
+  MANAGE_MEMBERS
+  MANAGE_BOOKINGS
+  MANAGE_VISITS
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum VisitRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+// ---------------------------------------------------------------------------
+// Accounts (Auth.js + credentials)
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  platformRole  PlatformRole @default(MEMBER)
+  locale        String    @default("en")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts             Account[]
+  sessions             Session[]
+  memberships          SiteMember[]
+  createdSites         TouristicSite[] @relation("SiteCreator")
+  createdEvents        Event[]         @relation("EventCreator")
+  bookings             Booking[]
+  visitRequests        VisitRequest[]  @relation("VisitRequester")
+  reviewedVisitRequest VisitRequest[]  @relation("VisitReviewer")
+  verifiedSites        TouristicSite[] @relation("SiteVerifier")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------------------------
+// Touristic sites
+// ---------------------------------------------------------------------------
+
+model TouristicSite {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  summary       String?
+  description   String?
+  category      String?
+  address       String?
+  city          String?
+  country       String?
+  latitude      Float?
+  longitude     Float?
+  coverImageUrl String?
+  openingHours  String?
+  entryFeeCents Int      @default(0)
+  currency      String   @default("XAF")
+  published     Boolean  @default(false)
+  verification     SiteVerificationStatus @default(UNVERIFIED)
+  verificationNote String?
+  verifiedAt       DateTime?
+  verifiedById     String?
+  createdById   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  createdBy     User           @relation("SiteCreator", fields: [createdById], references: [id])
+  verifiedBy    User?          @relation("SiteVerifier", fields: [verifiedById], references: [id])
+  members       SiteMember[]
+  events        Event[]
+  visitRequests VisitRequest[]
+  images        SiteImage[]
+
+  @@index([published])
+  @@index([verification])
+  @@index([createdById])
+}
+
+/// A user's admin seat on a site. The creator gets OWNER with every permission;
+/// extra admins are granted a subset via `permissions`.
+model SiteMember {
+  id          String           @id @default(cuid())
+  userId      String
+  siteId      String
+  role        SiteRole         @default(ADMIN)
+  permissions SitePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  site TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, siteId])
+  @@index([siteId])
+}
+
+// ---------------------------------------------------------------------------
+// Events & bookings
+// ---------------------------------------------------------------------------
+
+model Event {
+  id            String      @id @default(cuid())
+  siteId        String
+  title         String
+  slug          String
+  description   String?
+  startsAt      DateTime
+  endsAt        DateTime?
+  capacity      Int?
+  priceCents    Int         @default(0)
+  currency      String      @default("XAF")
+  location      String?
+  coverImageUrl String?
+  status        EventStatus @default(DRAFT)
+  createdById   String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  site      TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  createdBy User          @relation("EventCreator", fields: [createdById], references: [id])
+  bookings  Booking[]
+  images    EventImage[]
+
+  @@unique([siteId, slug])
+  @@index([siteId, startsAt])
+  @@index([status, startsAt])
+}
+
+model Booking {
+  id        String        @id @default(cuid())
+  reference String        @unique
+  eventId   String
+  userId    String
+  seats     Int           @default(1)
+  status    BookingStatus @default(PENDING)
+  note      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // One booking per user per event; seat count carries the party size.
+  @@unique([eventId, userId])
+  @@index([eventId, status])
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Visit requests
+// ---------------------------------------------------------------------------
+
+model VisitRequest {
+  id           String             @id @default(cuid())
+  siteId       String
+  userId       String
+  visitDate    DateTime
+  partySize    Int                @default(1)
+  message      String?
+  status       VisitRequestStatus @default(PENDING)
+  responseNote String?
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  site       TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  user       User          @relation("VisitRequester", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy User?         @relation("VisitReviewer", fields: [reviewedById], references: [id])
+
+  @@index([siteId, status])
+  @@index([userId])
+}
+
+/// A photo of a site, uploaded by its team and served from `public/uploads`.
+model SiteImage {
+  id        String   @id @default(cuid())
+  siteId    String
+  url       String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  site TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, sortOrder])
+}
+
+/// A photo of an event, uploaded by the site team alongside its cover.
+model EventImage {
+  id        String   @id @default(cuid())
+  eventId   String
+  url       String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, sortOrder])
+}
