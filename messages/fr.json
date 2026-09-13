@@ -316,7 +316,11 @@
     "cannotDemoteSelf": "Vous ne pouvez pas retirer votre propre rôle de super administrateur.",
     "wrongPassword": "Le mot de passe actuel est incorrect.",
     "newPassword": "Utilisez au moins 8 caractères.",
-    "resetLinkInvalid": "Ce lien a expiré ou a déjà été utilisé."
+    "resetLinkInvalid": "Ce lien a expiré ou a déjà été utilisé.",
+    "paymentMethodRequired": "Choisissez un moyen de paiement.",
+    "paymentDeclined": "Le paiement a été refusé. Votre place est retenue, vous pouvez réessayer.",
+    "invalidPhone": "Saisissez un numéro valide, par exemple +237 6XX XX XX XX.",
+    "invalidCard": "Saisissez le numéro de carte."
   },
   "Categories": {
     "MUSEUM": "Musée",
@@ -501,5 +505,36 @@
     "messageNotFound": "Ce message n’existe plus.",
     "forbidden": "Vous ne faites pas partie de cette discussion.",
     "cannotMuteSelf": "Vous ne pouvez pas vous rendre silencieux."
+  },
+  "Booking": {
+    "title": "Réserver cet événement",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "optional": "facultatif",
+    "attendeeName": "Nom complet",
+    "attendeePhone": "Numéro de téléphone",
+    "phoneHint": "Pour que l’organisateur puisse vous joindre le jour venu.",
+    "total": "Total",
+    "payWith": "Payer avec",
+    "MTN_MOMO": "MTN MoMo",
+    "ORANGE_MONEY": "Orange Money",
+    "CARD": "Carte",
+    "payerPhone": "Numéro mobile money",
+    "payerPhoneHint": "Laissez vide pour utiliser le numéro ci-dessus.",
+    "cardNumber": "Numéro de carte",
+    "cardHint": "Seuls les quatre derniers chiffres nous sont transmis.",
+    "cardExpiry": "Expiration",
+    "cardCvc": "CVC",
+    "cardInvalid": "Ce numéro de carte semble incorrect.",
+    "payNow": "Payer {amount}",
+    "confirmFree": "Confirmer la réservation",
+    "simulatedNotice": "Les paiements sont simulés tant qu’aucun prestataire n’est connecté. Rien n’est débité, et un numéro ou une carte se terminant par 0000 est refusé pour tester ce cas."
+  },
+  "Payment": {
+    "paid": "Payé",
+    "unpaid": "Non payé",
+    "failed": "Paiement refusé",
+    "simulated": "Paiement de test",
+    "methodLabel": "Payé avec"
   }
 }

@@ -1,8 +1,8 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { BookEventForm } from "@/app/[locale]/sites/[slug]/book-event-form";
 import { VisitRequestForm } from "@/app/[locale]/sites/[slug]/visit-request-form";
+import { BookEventDialog } from "@/components/booking/book-event-dialog";
 import { CoverImage } from "@/components/cover-image";
 import { EmptyState } from "@/components/empty-state";
 import { SiteLocationCard } from "@/components/map/site-location-card";
@@ -10,6 +10,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Link } from "@/i18n/navigation";
 import { openEventWhere } from "@/lib/events";
+import { paymentsAreSimulated } from "@/server/payments";
 import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser, getMembership } from "@/server/session";
@@ -65,6 +66,8 @@ export default async function SiteDetailPage({
         select: { id: true },
       })
     : null;
+
+  const simulated = paymentsAreSimulated();
 
   const place = [site.address, site.city, site.country].filter(Boolean).join(", ");
 
@@ -356,9 +359,22 @@ export default async function SiteDetailPage({
                       ) : seatsLeft === 0 ? (
                         <p className="alert alert-error">{eventsT("full")}</p>
                       ) : user ? (
-                        <BookEventForm
+                        <BookEventDialog
                           eventId={event.id}
+                          eventTitle={event.title}
                           maxSeats={seatsLeft ?? 50}
+                          priceLabel={
+                            event.priceCents === 0
+                              ? common("free")
+                              : formatMoney(
+                                  event.priceCents,
+                                  event.currency,
+                                  locale,
+                                )
+                          }
+                          isFree={event.priceCents === 0}
+                          simulatedPayments={simulated}
+                          defaultName={user.name ?? ""}
                         />
                       ) : (
                         <Link href="/login" className="btn-secondary btn-sm">

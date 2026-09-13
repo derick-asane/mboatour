@@ -53,6 +53,19 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum PaymentMethod {
+  MTN_MOMO
+  ORANGE_MONEY
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 enum VisitRequestStatus {
   PENDING
   APPROVED
@@ -228,14 +241,17 @@ model Booking {
   reference String        @unique
   eventId   String
   userId    String
-  seats     Int           @default(1)
-  status    BookingStatus @default(PENDING)
-  note      String?
+  seats       Int           @default(1)
+  status      BookingStatus @default(PENDING)
+  note        String?
+  attendeeName  String?
+  attendeePhone String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment Payment?
 
   // One booking per user per event; seat count carries the party size.
   @@unique([eventId, userId])
@@ -334,4 +350,33 @@ model EventChatMute {
 
   @@unique([eventId, userId])
   @@index([eventId])
+}
+
+// ---------------------------------------------------------------------------
+// Payments
+// ---------------------------------------------------------------------------
+
+/// What was collected for a booking. Card numbers never reach this table or
+/// this server: the browser keeps the number and sends only the last four
+/// digits, which is all a receipt needs.
+model Payment {
+  id          String        @id @default(cuid())
+  bookingId   String        @unique
+  amountCents Int
+  currency    String
+  method      PaymentMethod
+  status      PaymentStatus @default(PENDING)
+  /// Which adapter handled it: "mock" until a real aggregator is configured.
+  provider    String
+  providerRef String?
+  payerPhone  String?
+  cardLast4   String?
+  failureCode String?
+  paidAt      DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([status])
 }

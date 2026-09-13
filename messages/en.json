@@ -316,7 +316,11 @@
     "cannotDemoteSelf": "You cannot remove your own super administrator role.",
     "wrongPassword": "That current password is not right.",
     "newPassword": "Use at least 8 characters.",
-    "resetLinkInvalid": "This link has expired or has already been used."
+    "resetLinkInvalid": "This link has expired or has already been used.",
+    "paymentMethodRequired": "Choose how you want to pay.",
+    "paymentDeclined": "The payment was declined. Your seat is held, so you can try again.",
+    "invalidPhone": "Enter a valid phone number, for example +237 6XX XX XX XX.",
+    "invalidCard": "Enter the card number."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -501,5 +505,36 @@
     "messageNotFound": "That message is gone.",
     "forbidden": "You are not in this chat.",
     "cannotMuteSelf": "You cannot mute yourself."
+  },
+  "Booking": {
+    "title": "Book this event",
+    "close": "Close",
+    "cancel": "Cancel",
+    "optional": "optional",
+    "attendeeName": "Full name",
+    "attendeePhone": "Phone number",
+    "phoneHint": "So the organiser can reach you on the day.",
+    "total": "Total",
+    "payWith": "Pay with",
+    "MTN_MOMO": "MTN MoMo",
+    "ORANGE_MONEY": "Orange Money",
+    "CARD": "Card",
+    "payerPhone": "Mobile money number",
+    "payerPhoneHint": "Leave empty to use the number above.",
+    "cardNumber": "Card number",
+    "cardHint": "Only the last four digits are sent to us.",
+    "cardExpiry": "Expiry",
+    "cardCvc": "CVC",
+    "cardInvalid": "That card number does not look right.",
+    "payNow": "Pay {amount}",
+    "confirmFree": "Confirm booking",
+    "simulatedNotice": "Payments are simulated while no provider is connected. Nothing is charged, and a number or card ending 0000 is declined so you can test that path."
+  },
+  "Payment": {
+    "paid": "Paid",
+    "unpaid": "Not paid",
+    "failed": "Payment failed",
+    "simulated": "Test payment",
+    "methodLabel": "Paid with"
   }
 }

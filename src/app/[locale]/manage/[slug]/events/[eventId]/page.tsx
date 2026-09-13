@@ -9,6 +9,7 @@ import {
 import { EmptyState } from "@/components/empty-state";
 import { SectionHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
+import { formatMoney } from "@/lib/format";
 import { can } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { loadManagedSite } from "@/server/manage";
@@ -33,7 +34,18 @@ export default async function ManageEventPage({
     include: {
       bookings: {
         orderBy: { createdAt: "desc" },
-        include: { user: { select: { name: true, email: true } } },
+        include: {
+          user: { select: { name: true, email: true } },
+          payment: {
+            select: {
+              status: true,
+              method: true,
+              amountCents: true,
+              currency: true,
+              provider: true,
+            },
+          },
+        },
       },
       images: {
         orderBy: { sortOrder: "asc" },
@@ -47,6 +59,8 @@ export default async function ManageEventPage({
   const t = await getTranslations("Bookings");
   const formT = await getTranslations("EventForm");
   const format = await getFormatter();
+  const payments = await getTranslations("Payment");
+  const bookingT = await getTranslations("Booking");
 
   const bookedSeats = event.bookings
     .filter((booking) => booking.status !== "CANCELLED")
@@ -113,6 +127,44 @@ export default async function ManageEventPage({
                             dateStyle: "medium",
                           })}
                         </p>
+                        {booking.attendeePhone ? (
+                          <p className="text-xs text-muted">
+                            {booking.attendeeName ?? who} · {booking.attendeePhone}
+                          </p>
+                        ) : null}
+                        {booking.payment ? (
+                          <p className="flex flex-wrap items-center gap-1.5 text-xs">
+                            <span
+                              className={`badge ${
+                                booking.payment.status === "PAID"
+                                  ? "badge-success"
+                                  : booking.payment.status === "FAILED"
+                                    ? "badge-danger"
+                                    : ""
+                              }`}
+                            >
+                              {booking.payment.status === "PAID"
+                                ? payments("paid")
+                                : booking.payment.status === "FAILED"
+                                  ? payments("failed")
+                                  : payments("unpaid")}
+                            </span>
+                            <span className="text-muted">
+                              {formatMoney(
+                                booking.payment.amountCents,
+                                booking.payment.currency,
+                                locale,
+                              )}
+                              {" · "}
+                              {bookingT(booking.payment.method)}
+                            </span>
+                            {/* Simulated charges are labelled wherever they appear, so a
+                                test booking is never mistaken for money received. */}
+                            {booking.payment.provider === "mock" ? (
+                              <span className="badge badge-warning">{payments("simulated")}</span>
+                            ) : null}
+                          </p>
+                        ) : null}
                         {booking.note ? (
                           <p className="text-xs text-faint">{booking.note}</p>
                         ) : null}

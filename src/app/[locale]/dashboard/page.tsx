@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/empty-state";
 import { SectionHeader, PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { Link } from "@/i18n/navigation";
+import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/server/session";
 
@@ -21,6 +22,8 @@ export default async function DashboardPage({
   const members = await getTranslations("Members");
   const sitesT = await getTranslations("Sites");
   const chat = await getTranslations("Chat");
+  const payments = await getTranslations("Payment");
+  const bookingT = await getTranslations("Booking");
   const format = await getFormatter();
 
   const [memberships, bookings, visitRequests] = await Promise.all([
@@ -33,6 +36,15 @@ export default async function DashboardPage({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
       include: {
+        payment: {
+          select: {
+            status: true,
+            method: true,
+            amountCents: true,
+            currency: true,
+            provider: true,
+          },
+        },
         event: {
           select: {
             id: true,
@@ -150,6 +162,39 @@ export default async function DashboardPage({
                   <p className="text-xs text-faint">
                     {t("reference")}: {booking.reference} · {booking.seats}
                   </p>
+                  {booking.payment ? (
+                    <p className="flex flex-wrap items-center gap-1.5 text-xs">
+                      <span
+                        className={`badge ${
+                          booking.payment.status === "PAID"
+                            ? "badge-success"
+                            : booking.payment.status === "FAILED"
+                              ? "badge-danger"
+                              : ""
+                        }`}
+                      >
+                        {booking.payment.status === "PAID"
+                          ? payments("paid")
+                          : booking.payment.status === "FAILED"
+                            ? payments("failed")
+                            : payments("unpaid")}
+                      </span>
+                      <span className="text-muted">
+                        {formatMoney(
+                          booking.payment.amountCents,
+                          booking.payment.currency,
+                          locale,
+                        )}
+                        {" · "}
+                        {bookingT(booking.payment.method)}
+                      </span>
+                      {/* Simulated charges are labelled wherever they appear, so a
+                          test booking is never mistaken for money received. */}
+                      {booking.payment.provider === "mock" ? (
+                        <span className="badge badge-warning">{payments("simulated")}</span>
+                      ) : null}
+                    </p>
+                  ) : null}
                 </div>
                 <StatusBadge status={booking.status} />
                 {booking.status !== "CANCELLED" ? (

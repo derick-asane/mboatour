@@ -497,6 +497,12 @@ input[type="radio"] {
     color: var(--danger);
   }
 
+  .alert-warning {
+    border-color: var(--warning-border);
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+
   .alert-success {
     border-color: var(--success-border);
     background: var(--success-soft);
