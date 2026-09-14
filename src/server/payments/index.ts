@@ -26,11 +26,23 @@ export type ChargeResult =
   | { status: "PAID"; providerRef: string }
   | { status: "FAILED"; failureCode: string };
 
+export type RefundRequest = {
+  /// The reference the original charge came back with.
+  providerRef: string;
+  amountCents: number;
+  currency: string;
+};
+
+export type RefundResult =
+  | { status: "REFUNDED"; refundRef: string }
+  | { status: "FAILED"; failureCode: string };
+
 export type PaymentProvider = {
   name: string;
   /// True when charges are simulated, so the UI can say so plainly.
   simulated: boolean;
   charge(request: ChargeRequest): Promise<ChargeResult>;
+  refund(request: RefundRequest): Promise<RefundResult>;
 };
 
 /// Approves everything except deliberately unlucky inputs, so the failure path
@@ -49,6 +61,16 @@ const simulatedProvider: PaymentProvider = {
     if (declined) return { status: "FAILED", failureCode: "declined" };
 
     return { status: "PAID", providerRef: `sim_${randomUUID()}` };
+  },
+  async refund(request) {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    // A charge that never reached a provider has nothing to send back.
+    if (!request.providerRef) {
+      return { status: "FAILED", failureCode: "unknownCharge" };
+    }
+
+    return { status: "REFUNDED", refundRef: `sim_refund_${randomUUID()}` };
   },
 };
 

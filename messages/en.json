@@ -281,7 +281,10 @@
     "messageRemoved": "Message removed.",
     "participantMuted": "Participant muted.",
     "participantUnmuted": "Participant can post again.",
-    "messageEdited": "Message updated."
+    "messageEdited": "Message updated.",
+    "bookingRefunded": "Booking cancelled and your payment refunded.",
+    "bookingCancelledNoRefund": "Booking cancelled. The event has already started, so the payment is not refunded.",
+    "bookingCancelledRefundPending": "Booking cancelled, but the refund did not go through. The site team will sort it out."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -543,6 +546,8 @@
     "unpaid": "Not paid",
     "failed": "Payment failed",
     "simulated": "Test payment",
-    "methodLabel": "Paid with"
+    "methodLabel": "Paid with",
+    "refunded": "Refunded",
+    "refundNote": "Cancel before the event starts for a refund."
   }
 }

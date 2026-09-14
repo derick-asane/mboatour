@@ -23,6 +23,7 @@ export default async function ManageEventsPage({
   const formT = await getTranslations("EventForm");
   const bookingsT = await getTranslations("Bookings");
   const chatT = await getTranslations("Chat");
+  const common = await getTranslations("Common");
   const format = await getFormatter();
 
   const mayCreate = can(membership, "MANAGE_EVENTS");
@@ -105,6 +106,15 @@ export default async function ManageEventsPage({
               >
                 {chatT("openChat")}
               </Link>
+
+              {mayCreate ? (
+                <Link
+                  href={`/manage/${slug}/events/${event.id}/edit`}
+                  className="btn-secondary btn-sm"
+                >
+                  {common("edit")}
+                </Link>
+              ) : null}
 
               <Link
                 href={`/manage/${slug}/events/${event.id}`}

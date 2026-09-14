@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { hasEnded } from "@/lib/events";
+import { isRefundable, type CancelledBy } from "@/lib/refunds";
 import {
   isPaymentMethod,
   needsCard,
@@ -39,6 +40,64 @@ const bookingSchema = z.object({
   // The browser keeps the card number and sends only these four digits.
   cardLast4: z.string().trim().regex(/^\d{4}$/).optional(),
 });
+
+type RefundOutcome = "refunded" | "notRefundable" | "nothingToRefund" | "failed";
+
+/// Sends the money back for a cancelled booking, if the policy allows it and
+/// there is a settled payment to reverse. Never throws: a booking is cancelled
+/// either way, and an unreversed payment is visible in its own status rather
+/// than lost.
+async function refundForCancellation(
+  bookingId: string,
+  event: { startsAt: Date },
+  cancelledBy: CancelledBy,
+): Promise<RefundOutcome> {
+  const payment = await prisma.payment.findUnique({
+    where: { bookingId },
+    select: {
+      id: true,
+      status: true,
+      amountCents: true,
+      currency: true,
+      providerRef: true,
+    },
+  });
+
+  if (!payment || payment.status !== "PAID") return "nothingToRefund";
+  if (!isRefundable(event, cancelledBy)) return "notRefundable";
+
+  try {
+    const result = await paymentProvider().refund({
+      providerRef: payment.providerRef ?? "",
+      amountCents: payment.amountCents,
+      currency: payment.currency,
+    });
+
+    if (result.status !== "REFUNDED") {
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: { failureCode: result.failureCode },
+      });
+
+      return "failed";
+    }
+
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: "REFUNDED",
+        refundedAt: new Date(),
+        refundRef: result.refundRef,
+        failureCode: null,
+      },
+    });
+
+    return "refunded";
+  } catch (error) {
+    console.error("[payments] refund failed:", error);
+    return "failed";
+  }
+}
 
 /// Seats already committed against an event's capacity.
 function takenSeats(bookings: { seats: number; status: string }[]): number {
@@ -267,7 +326,12 @@ export async function cancelOwnBookingAction(
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    select: { id: true, userId: true },
+    select: {
+      id: true,
+      userId: true,
+      status: true,
+      event: { select: { startsAt: true } },
+    },
   });
 
   if (!booking || booking.userId !== user.id) return failure("bookingNotFound");
@@ -277,8 +341,18 @@ export async function cancelOwnBookingAction(
     data: { status: "CANCELLED" },
   });
 
+  // Only a booking that was still live had anything to give back.
+  const outcome =
+    booking.status === "CANCELLED"
+      ? "nothingToRefund"
+      : await refundForCancellation(booking.id, booking.event, "VISITOR");
+
   const locale = await getLocale();
   revalidatePath(`/${locale}/dashboard`);
+
+  if (outcome === "refunded") return { success: "bookingRefunded" };
+  if (outcome === "notRefundable") return { success: "bookingCancelledNoRefund" };
+  if (outcome === "failed") return { success: "bookingCancelledRefundPending" };
 
   return { success: "bookingCancelled" };
 }
@@ -302,6 +376,7 @@ export async function decideBookingAction(
       id: true,
       seats: true,
       reference: true,
+      status: true,
       user: { select: { email: true, locale: true } },
       event: {
         select: {
@@ -328,6 +403,12 @@ export async function decideBookingAction(
     where: { id: bookingId },
     data: { status: decision as "CONFIRMED" | "CANCELLED" | "PENDING" },
   });
+
+  // A booking called off by the site is always refunded, whenever it happens:
+  // the visitor did nothing wrong.
+  if (decision === "CANCELLED" && booking.status !== "CANCELLED") {
+    await refundForCancellation(booking.id, booking.event, "ORGANISER");
+  }
 
   await sendBookingDecisionEmail(
     booking.user,

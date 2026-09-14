@@ -170,14 +170,18 @@ export default async function DashboardPage({
                             ? "badge-success"
                             : booking.payment.status === "FAILED"
                               ? "badge-danger"
-                              : ""
+                              : booking.payment.status === "REFUNDED"
+                                ? "badge-warning"
+                                : ""
                         }`}
                       >
                         {booking.payment.status === "PAID"
                           ? payments("paid")
                           : booking.payment.status === "FAILED"
                             ? payments("failed")
-                            : payments("unpaid")}
+                            : booking.payment.status === "REFUNDED"
+                              ? payments("refunded")
+                              : payments("unpaid")}
                       </span>
                       <span className="text-muted">
                         {formatMoney(

@@ -1,11 +1,7 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
-import {
-  BookingDecision,
-  DeleteEventButton,
-  EditEventForm,
-} from "@/app/[locale]/manage/[slug]/events/[eventId]/event-clients";
+import { BookingDecision } from "@/app/[locale]/manage/[slug]/events/[eventId]/event-clients";
 import { EmptyState } from "@/components/empty-state";
 import { SectionHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
@@ -29,6 +25,10 @@ export default async function ManageEventPage({
   const mayReview = can(membership, "MANAGE_BOOKINGS");
 
   if (!mayEdit && !mayReview) notFound();
+
+  // This page is the booking list. Anyone who cannot see bookings belongs on
+  // the form instead of an empty page.
+  if (!mayReview) redirect(`/${locale}/manage/${slug}/events/${eventId}/edit`);
 
   const event = await prisma.event.findUnique({
     where: { id: eventId },
@@ -70,33 +70,11 @@ export default async function ManageEventPage({
 
   return (
     <div className="space-y-10">
-      {mayEdit ? (
-        <section className="max-w-2xl space-y-4">
-          <SectionHeader title={formT("editTitle")} />
-          <EditEventForm
-            values={{
-              id: event.id,
-              title: event.title,
-              description: event.description,
-              location: event.location,
-              coverImageUrl: event.coverImageUrl,
-              images: event.images,
-              startsAt: event.startsAt,
-              endsAt: event.endsAt,
-              capacity: event.capacity,
-              priceCents: event.priceCents,
-              currency: event.currency,
-              status: event.status,
-            }}
-          />
-          <DeleteEventButton eventId={event.id} />
-        </section>
-      ) : null}
-
       {mayReview ? (
         <section className="space-y-4">
           <SectionHeader
-            title={t("title")}
+            title={event.title}
+            description={t("title")}
             actions={
               <>
                 <span className="badge badge-accent">
@@ -108,6 +86,14 @@ export default async function ManageEventPage({
                 >
                   {chatT("openChat")}
                 </Link>
+                {mayEdit ? (
+                  <Link
+                    href={`/manage/${slug}/events/${eventId}/edit`}
+                    className="btn-secondary btn-sm"
+                  >
+                    {formT("editTitle")}
+                  </Link>
+                ) : null}
               </>
             }
           />
@@ -150,14 +136,18 @@ export default async function ManageEventPage({
                                   ? "badge-success"
                                   : booking.payment.status === "FAILED"
                                     ? "badge-danger"
-                                    : ""
+                                    : booking.payment.status === "REFUNDED"
+                                      ? "badge-warning"
+                                      : ""
                               }`}
                             >
                               {booking.payment.status === "PAID"
                                 ? payments("paid")
                                 : booking.payment.status === "FAILED"
                                   ? payments("failed")
-                                  : payments("unpaid")}
+                                  : booking.payment.status === "REFUNDED"
+                                    ? payments("refunded")
+                                    : payments("unpaid")}
                             </span>
                             <span className="text-muted">
                               {formatMoney(

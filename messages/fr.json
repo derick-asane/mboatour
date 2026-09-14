@@ -281,7 +281,10 @@
     "messageRemoved": "Message retiré.",
     "participantMuted": "Participant rendu silencieux.",
     "participantUnmuted": "Le participant peut de nouveau écrire.",
-    "messageEdited": "Message mis à jour."
+    "messageEdited": "Message mis à jour.",
+    "bookingRefunded": "Réservation annulée et paiement remboursé.",
+    "bookingCancelledNoRefund": "Réservation annulée. L’événement a déjà commencé, le paiement n’est donc pas remboursé.",
+    "bookingCancelledRefundPending": "Réservation annulée, mais le remboursement n’a pas abouti. L’équipe du site s’en occupera."
   },
   "Errors": {
     "invalidInput": "Veuillez vérifier les champs signalés.",
@@ -543,6 +546,8 @@
     "unpaid": "Non payé",
     "failed": "Paiement refusé",
     "simulated": "Paiement de test",
-    "methodLabel": "Payé avec"
+    "methodLabel": "Payé avec",
+    "refunded": "Remboursé",
+    "refundNote": "Annulez avant le début de l’événement pour être remboursé."
   }
 }
