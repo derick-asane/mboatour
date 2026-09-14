@@ -284,7 +284,14 @@
     "messageEdited": "Message updated.",
     "bookingRefunded": "Booking cancelled and your payment refunded.",
     "bookingCancelledNoRefund": "Booking cancelled. The event has already started, so the payment is not refunded.",
-    "bookingCancelledRefundPending": "Booking cancelled, but the refund did not go through. The site team will sort it out."
+    "bookingCancelledRefundPending": "Booking cancelled, but the refund did not go through. The site team will sort it out.",
+    "reviewPosted": "Thank you, your review is published.",
+    "reviewUpdated": "Your review is updated.",
+    "reviewDeleted": "Your review is removed.",
+    "replyPosted": "Reply published.",
+    "replyRemoved": "Reply removed.",
+    "reviewHidden": "Review hidden.",
+    "reviewRestored": "Review restored."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -324,7 +331,10 @@
     "paymentMethodRequired": "Choose how you want to pay.",
     "paymentDeclined": "The payment was declined. Your seat is held, so you can try again.",
     "invalidPhone": "Enter a valid phone number, for example +237 6XX XX XX XX.",
-    "invalidCard": "Enter the card number."
+    "invalidCard": "Enter the card number.",
+    "invalidRating": "Choose a rating between 1 and 5 stars.",
+    "notBeenYet": "You can only review a site you have visited.",
+    "reviewNotFound": "That review is gone."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -549,5 +559,30 @@
     "methodLabel": "Paid with",
     "refunded": "Refunded",
     "refundNote": "Cancel before the event starts for a refund."
+  },
+  "Reviews": {
+    "title": "Reviews",
+    "count": "{count, plural, =0 {No reviews yet} =1 {# review} other {# reviews}}",
+    "none": "No reviews yet. Be the first once you have been.",
+    "you": "You",
+    "yourRating": "Your rating",
+    "yourReview": "Your review",
+    "bodyPlaceholder": "What should other visitors know?",
+    "starLabel": "{count, plural, =1 {# star} other {# stars}}",
+    "postReview": "Post review",
+    "updateReview": "Update review",
+    "deleteReview": "Delete",
+    "editedMark": "edited",
+    "hidden": "Hidden",
+    "hide": "Hide",
+    "restore": "Restore",
+    "reply": "Reply",
+    "editReply": "Edit reply",
+    "saveReply": "Save reply",
+    "cancel": "Cancel",
+    "replyPlaceholder": "Answer as the site team.",
+    "replyFrom": "Reply from {site}",
+    "notBeenYet": "You can review this site once you have been on a booked event or an approved visit.",
+    "signInToReview": "Sign in to leave a review."
   }
 }

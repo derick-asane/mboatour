@@ -284,7 +284,14 @@
     "messageEdited": "Message mis à jour.",
     "bookingRefunded": "Réservation annulée et paiement remboursé.",
     "bookingCancelledNoRefund": "Réservation annulée. L’événement a déjà commencé, le paiement n’est donc pas remboursé.",
-    "bookingCancelledRefundPending": "Réservation annulée, mais le remboursement n’a pas abouti. L’équipe du site s’en occupera."
+    "bookingCancelledRefundPending": "Réservation annulée, mais le remboursement n’a pas abouti. L’équipe du site s’en occupera.",
+    "reviewPosted": "Merci, votre avis est publié.",
+    "reviewUpdated": "Votre avis est mis à jour.",
+    "reviewDeleted": "Votre avis est supprimé.",
+    "replyPosted": "Réponse publiée.",
+    "replyRemoved": "Réponse supprimée.",
+    "reviewHidden": "Avis masqué.",
+    "reviewRestored": "Avis rétabli."
   },
   "Errors": {
     "invalidInput": "Veuillez vérifier les champs signalés.",
@@ -324,7 +331,10 @@
     "paymentMethodRequired": "Choisissez un moyen de paiement.",
     "paymentDeclined": "Le paiement a été refusé. Votre place est retenue, vous pouvez réessayer.",
     "invalidPhone": "Saisissez un numéro valide, par exemple +237 6XX XX XX XX.",
-    "invalidCard": "Saisissez le numéro de carte."
+    "invalidCard": "Saisissez le numéro de carte.",
+    "invalidRating": "Choisissez une note entre 1 et 5 étoiles.",
+    "notBeenYet": "Vous ne pouvez donner un avis que sur un site que vous avez visité.",
+    "reviewNotFound": "Cet avis n’existe plus."
   },
   "Categories": {
     "MUSEUM": "Musée",
@@ -549,5 +559,30 @@
     "methodLabel": "Payé avec",
     "refunded": "Remboursé",
     "refundNote": "Annulez avant le début de l’événement pour être remboursé."
+  },
+  "Reviews": {
+    "title": "Avis",
+    "count": "{count, plural, =0 {Aucun avis} =1 {# avis} other {# avis}}",
+    "none": "Aucun avis pour l’instant. Soyez le premier après votre visite.",
+    "you": "Vous",
+    "yourRating": "Votre note",
+    "yourReview": "Votre avis",
+    "bodyPlaceholder": "Que doivent savoir les autres visiteurs ?",
+    "starLabel": "{count, plural, =1 {# étoile} other {# étoiles}}",
+    "postReview": "Publier l’avis",
+    "updateReview": "Mettre à jour",
+    "deleteReview": "Supprimer",
+    "editedMark": "modifié",
+    "hidden": "Masqué",
+    "hide": "Masquer",
+    "restore": "Rétablir",
+    "reply": "Répondre",
+    "editReply": "Modifier la réponse",
+    "saveReply": "Enregistrer la réponse",
+    "cancel": "Annuler",
+    "replyPlaceholder": "Répondez au nom de l’équipe du site.",
+    "replyFrom": "Réponse de {site}",
+    "notBeenYet": "Vous pourrez donner un avis après un événement réservé ou une visite approuvée.",
+    "signInToReview": "Connectez-vous pour laisser un avis."
   }
 }

@@ -97,6 +97,9 @@ model User {
   bookings             Booking[]
   visitRequests        VisitRequest[]  @relation("VisitRequester")
   reviewedVisitRequest VisitRequest[]  @relation("VisitReviewer")
+  reviews              Review[]        @relation("ReviewAuthor")
+  hiddenReviews        Review[]        @relation("ReviewModerator")
+  reviewReplies        Review[]        @relation("ReviewResponder")
   verifiedSites        TouristicSite[] @relation("SiteVerifier")
   eventMessages        EventMessage[]  @relation("MessageAuthor")
   moderatedMessages    EventMessage[]  @relation("MessageModerator")
@@ -178,6 +181,11 @@ model TouristicSite {
   events        Event[]
   visitRequests VisitRequest[]
   images        SiteImage[]
+  reviews       Review[]
+
+  /// Kept alongside the reviews so listings and cards need no aggregate query.
+  ratingAverage Float?
+  ratingCount   Int     @default(0)
 
   @@index([published])
   @@index([verification])
@@ -384,4 +392,39 @@ model Payment {
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
   @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Reviews
+// ---------------------------------------------------------------------------
+
+/// One rating per person per site, left only by someone who actually went:
+/// a booking on an event that has finished, or an approved visit whose date
+/// has passed. That is what separates these from ratings anyone can invent.
+model Review {
+  id        String   @id @default(cuid())
+  siteId    String
+  userId    String
+  rating    Int
+  body      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  editedAt  DateTime?
+
+  /// The site team may answer a review, but never remove one: hiding is left
+  /// to platform admins, so a site cannot bury what it dislikes.
+  reply       String?
+  repliedAt   DateTime?
+  repliedById String?
+
+  hiddenAt   DateTime?
+  hiddenById String?
+
+  site        TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  user        User          @relation("ReviewAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  hiddenBy    User?         @relation("ReviewModerator", fields: [hiddenById], references: [id])
+  repliedBy   User?         @relation("ReviewResponder", fields: [repliedById], references: [id])
+
+  @@unique([siteId, userId])
+  @@index([siteId, createdAt])
 }

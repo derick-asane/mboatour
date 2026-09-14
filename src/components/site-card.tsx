@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 
 import { CoverImage } from "@/components/cover-image";
+import { RatingSummary } from "@/components/reviews/stars";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Link } from "@/i18n/navigation";
 
@@ -14,6 +15,8 @@ type SiteCardProps = {
     category: string | null;
     coverImageUrl: string | null;
     verification: string;
+    ratingAverage: number | null;
+    ratingCount: number;
   };
   upcomingEvents: number;
 };
@@ -21,6 +24,7 @@ type SiteCardProps = {
 export function SiteCard({ site, upcomingEvents }: SiteCardProps) {
   const t = useTranslations("Sites");
   const categories = useTranslations("Categories");
+  const reviews = useTranslations("Reviews");
   const place = [site.city, site.country].filter(Boolean).join(", ");
 
   return (
@@ -75,9 +79,16 @@ export function SiteCard({ site, upcomingEvents }: SiteCardProps) {
           <p className="line-clamp-2 text-sm text-muted">{site.summary}</p>
         ) : null}
 
-        <p className="mt-auto pt-2 text-xs font-medium text-accent">
-          {t("upcomingEvents", { count: upcomingEvents })}
-        </p>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
+          <p className="text-xs font-medium text-accent">
+            {t("upcomingEvents", { count: upcomingEvents })}
+          </p>
+          <RatingSummary
+            average={site.ratingAverage}
+            count={site.ratingCount}
+            label={reviews("count", { count: site.ratingCount })}
+          />
+        </div>
       </div>
     </Link>
   );

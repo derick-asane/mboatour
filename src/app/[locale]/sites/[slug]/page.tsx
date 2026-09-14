@@ -6,12 +6,17 @@ import { BookEventDialog } from "@/components/booking/book-event-dialog";
 import { CoverImage } from "@/components/cover-image";
 import { EmptyState } from "@/components/empty-state";
 import { SiteLocationCard } from "@/components/map/site-location-card";
+import { ReviewForm } from "@/components/reviews/review-form";
+import { ReviewList } from "@/components/reviews/review-list";
+import { RatingSummary } from "@/components/reviews/stars";
 import { StatusBadge } from "@/components/status-badge";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Link } from "@/i18n/navigation";
 import { openEventWhere } from "@/lib/events";
 import { formatMoney } from "@/lib/format";
+import { isPlatformAdmin } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
+import { canReviewSite } from "@/server/reviews";
 import { getCurrentUser, getMembership } from "@/server/session";
 
 export default async function SiteDetailPage({
@@ -65,6 +70,37 @@ export default async function SiteDetailPage({
         select: { id: true },
       })
     : null;
+
+  const reviewsT = await getTranslations("Reviews");
+
+  const [reviews, eligibility] = await Promise.all([
+    prisma.review.findMany({
+      where: {
+        siteId: site.id,
+        // A hidden review stays visible to its author and to the platform, so
+        // nobody is left wondering where their words went.
+        ...(user && isPlatformAdmin(user.platformRole)
+          ? {}
+          : { OR: [{ hiddenAt: null }, ...(user ? [{ userId: user.id }] : [])] }),
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        rating: true,
+        body: true,
+        createdAt: true,
+        editedAt: true,
+        hiddenAt: true,
+        reply: true,
+        repliedAt: true,
+        userId: true,
+        user: { select: { name: true, email: true } },
+      },
+    }),
+    canReviewSite(user?.id ?? null, site.id),
+  ]);
+
+  const myReview = user ? reviews.find((r) => r.userId === user.id) : undefined;
 
   const place = [site.address, site.city, site.country].filter(Boolean).join(", ");
 
@@ -159,6 +195,12 @@ export default async function SiteDetailPage({
             </div>
 
             <h1 className="page-title sm:text-[2.125rem]">{site.name}</h1>
+
+            <RatingSummary
+              average={site.ratingAverage}
+              count={site.ratingCount}
+              label={reviewsT("count", { count: site.ratingCount })}
+            />
 
             {site.summary ? (
               <p className="lede max-w-2xl">{site.summary}</p>
@@ -382,6 +424,43 @@ export default async function SiteDetailPage({
                 })}
               </ul>
             )}
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="section-title">{reviewsT("title")}</h2>
+
+            {eligibility.allowed ? (
+              <ReviewForm
+                siteId={site.id}
+                currentRating={myReview?.rating ?? null}
+                currentBody={myReview?.body ?? null}
+              />
+            ) : (
+              <p className="hint">
+                {eligibility.reason === "signedOut"
+                  ? reviewsT("signInToReview")
+                  : reviewsT("notBeenYet")}
+              </p>
+            )}
+
+            <ReviewList
+              siteName={site.name}
+              canModerate={Boolean(user && isPlatformAdmin(user.platformRole))}
+              canReply={membership !== null}
+              reviews={reviews.map((review) => ({
+                id: review.id,
+                rating: review.rating,
+                body: review.body,
+                createdAt: review.createdAt,
+                editedAt: review.editedAt,
+                authorName:
+                  review.user.name ?? review.user.email.split("@")[0],
+                isMine: review.userId === user?.id,
+                hidden: review.hiddenAt !== null,
+                reply: review.reply,
+                repliedAt: review.repliedAt,
+              }))}
+            />
           </section>
         </div>
 
