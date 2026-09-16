@@ -7,8 +7,61 @@ import { z } from "zod";
 import { isPaymentMethod, needsPhone, normalisePhone } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
 import { failure, type ActionState } from "@/server/action-state";
+import {
+  sendGuideCancelledEmail,
+  sendGuidePaidEmails,
+  sendGuideRequestedEmail,
+  sendGuideResponseEmail,
+} from "@/server/email/notify";
 import { paymentProvider } from "@/server/payments";
 import { requireUser } from "@/server/session";
+
+/// Dates in emails are plain ISO days: short, unambiguous, and the same in
+/// every language the message might be read in.
+function formatDateRange(start: Date, end: Date | null): string {
+  const from = start.toISOString().slice(0, 10);
+
+  return end ? `${from} – ${end.toISOString().slice(0, 10)}` : from;
+}
+
+/// Everything a guide-booking email needs, gathered once.
+async function bookingContext(bookingId: string) {
+  const booking = await prisma.guideBooking.findUnique({
+    where: { id: bookingId },
+    select: {
+      startDate: true,
+      endDate: true,
+      partySize: true,
+      amountCents: true,
+      currency: true,
+      user: { select: { name: true, email: true, locale: true } },
+      guide: {
+        select: {
+          slug: true,
+          user: { select: { name: true, email: true, locale: true } },
+        },
+      },
+      sites: { select: { site: { select: { name: true } } } },
+    },
+  });
+
+  if (!booking) return null;
+
+  return {
+    traveller: booking.user,
+    guide: booking.guide.user,
+    context: {
+      guideName: booking.guide.user.name ?? booking.guide.user.email,
+      guideSlug: booking.guide.slug,
+      travellerName: booking.user.name ?? booking.user.email,
+      dates: formatDateRange(booking.startDate, booking.endDate),
+      partySize: booking.partySize,
+      amountCents: booking.amountCents,
+      currency: booking.currency,
+      sites: booking.sites.map((entry) => entry.site.name),
+    },
+  };
+}
 
 const requestSchema = z.object({
   guideId: z.string().min(1),
@@ -55,7 +108,14 @@ export async function requestGuideAction(
 
   const guide = await prisma.guideProfile.findUnique({
     where: { id: guideId },
-    select: { id: true, slug: true, status: true, currency: true, userId: true },
+    select: {
+      id: true,
+      slug: true,
+      status: true,
+      currency: true,
+      userId: true,
+      user: { select: { name: true, email: true, locale: true } },
+    },
   });
 
   if (!guide || guide.status !== "VERIFIED") return failure("guideNotAvailable");
@@ -69,8 +129,10 @@ export async function requestGuideAction(
   // Only real, published sites, so a request cannot name somewhere private.
   const sites = await prisma.touristicSite.findMany({
     where: { id: { in: siteIds }, published: true },
-    select: { id: true },
+    select: { id: true, name: true },
   });
+
+  const amountCents = Math.round(amount * 100);
 
   await prisma.guideBooking.create({
     data: {
@@ -80,10 +142,21 @@ export async function requestGuideAction(
       endDate,
       partySize,
       message,
-      amountCents: Math.round(amount * 100),
+      amountCents,
       currency: guide.currency,
       sites: { create: sites.map((site) => ({ siteId: site.id })) },
     },
+  });
+
+  await sendGuideRequestedEmail(guide.user, {
+    guideName: guide.user.name ?? guide.user.email,
+    guideSlug: guide.slug,
+    travellerName: user.name ?? user.email,
+    dates: formatDateRange(startDate, endDate),
+    partySize,
+    amountCents,
+    currency: guide.currency,
+    sites: sites.map((site) => site.name),
   });
 
   const locale = await getLocale();
@@ -137,6 +210,17 @@ export async function respondToGuideBookingAction(
       respondedAt: new Date(),
     },
   });
+
+  const details = await bookingContext(booking.id);
+
+  if (details) {
+    await sendGuideResponseEmail(
+      details.traveller,
+      details.context,
+      parsed.data.decision,
+      parsed.data.note,
+    );
+  }
 
   const locale = await getLocale();
   revalidatePath(`/${locale}/guide/bookings`);
@@ -241,6 +325,12 @@ export async function payGuideBookingAction(
 
   if (!paid) return failure("paymentDeclined");
 
+  const details = await bookingContext(booking.id);
+
+  if (details) {
+    await sendGuidePaidEmails(details.guide, details.traveller, details.context);
+  }
+
   const locale = await getLocale();
   revalidatePath(`/${locale}/dashboard`);
   revalidatePath(`/${locale}/guide/bookings`);
@@ -263,6 +353,7 @@ export async function cancelGuideBookingAction(
       id: true,
       userId: true,
       status: true,
+      payment: { select: { status: true } },
       guide: { select: { userId: true } },
     },
   });
@@ -279,6 +370,18 @@ export async function cancelGuideBookingAction(
     where: { id: booking.id },
     data: { status: "CANCELLED" },
   });
+
+  const details = await bookingContext(booking.id);
+
+  if (details) {
+    // Whoever did not press the button is the one who needs telling.
+    await sendGuideCancelledEmail(
+      isTraveller ? details.guide : details.traveller,
+      details.context,
+      isTraveller ? "TRAVELLER" : "GUIDE",
+      booking.payment?.status === "PAID",
+    );
+  }
 
   const locale = await getLocale();
   revalidatePath(`/${locale}/dashboard`);

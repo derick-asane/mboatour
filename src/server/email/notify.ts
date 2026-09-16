@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { routing } from "@/i18n/routing";
+import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { renderEmail } from "@/server/email/layout";
 import { appUrl, sendEmail } from "@/server/email/send";
@@ -243,6 +244,152 @@ export async function sendVerificationDecisionEmail(
         label: t("manageCta"),
         url: appUrl(`/${localeFor(owner.locale)}/manage/${siteSlug}`),
       },
+    })),
+  );
+}
+
+type GuideBookingContext = {
+  guideName: string;
+  guideSlug: string;
+  travellerName: string;
+  dates: string;
+  partySize: number;
+  amountCents: number;
+  currency: string;
+  sites: string[];
+};
+
+/// Money is read in the recipient's own language, so the facts are built inside
+/// each helper rather than passed in already formatted.
+function guideFacts(
+  context: GuideBookingContext,
+  t: Awaited<ReturnType<typeof getTranslations>>,
+  locale: string,
+) {
+  return [
+    { label: t("factWhen"), value: context.dates },
+    { label: t("factPeople"), value: String(context.partySize) },
+    {
+      label: t("factAmount"),
+      value: formatMoney(context.amountCents, context.currency, locale),
+    },
+    { label: t("factSites"), value: context.sites.join(", ") },
+  ];
+}
+
+/// A guide only learns someone wants them if we say so: nobody sits refreshing
+/// their inbox on the chance a request arrived.
+export async function sendGuideRequestedEmail(
+  guide: Recipient,
+  context: GuideBookingContext,
+): Promise<void> {
+  const locale = localeFor(guide.locale);
+
+  await safely(
+    deliver(guide, (t) => ({
+      subject: t("guideRequestedSubject", { name: context.travellerName }),
+      title: t("guideRequestedTitle"),
+      paragraphs: [t("guideRequestedBody", { name: context.travellerName })],
+      facts: guideFacts(context, t, locale),
+      action: {
+        label: t("guideInboxCta"),
+        url: appUrl(`/${locale}/guide/bookings`),
+      },
+    })),
+  );
+}
+
+export async function sendGuideResponseEmail(
+  traveller: Recipient,
+  context: GuideBookingContext,
+  decision: "ACCEPTED" | "DECLINED",
+  note: string | null,
+): Promise<void> {
+  const locale = localeFor(traveller.locale);
+
+  await safely(
+    deliver(traveller, (t) => ({
+      subject:
+        decision === "ACCEPTED"
+          ? t("guideAcceptedSubject", { name: context.guideName })
+          : t("guideDeclinedSubject", { name: context.guideName }),
+      title:
+        decision === "ACCEPTED" ? t("guideAcceptedTitle") : t("guideDeclinedTitle"),
+      paragraphs: [
+        decision === "ACCEPTED"
+          ? t("guideAcceptedBody", { name: context.guideName })
+          : t("guideDeclinedBody", { name: context.guideName }),
+        ...(note ? [note] : []),
+      ],
+      facts: guideFacts(context, t, locale),
+      action: {
+        label: decision === "ACCEPTED" ? t("guidePayCta") : t("guideFindCta"),
+        url: appUrl(
+          decision === "ACCEPTED" ? `/${locale}/dashboard` : `/${locale}/guides`,
+        ),
+      },
+    })),
+  );
+}
+
+/// Both sides hear about the money, because neither can watch it happen here:
+/// it went straight from one to the other.
+export async function sendGuidePaidEmails(
+  guide: Recipient,
+  traveller: Recipient,
+  context: GuideBookingContext,
+): Promise<void> {
+  const guideLocale = localeFor(guide.locale);
+  const travellerLocale = localeFor(traveller.locale);
+
+  await safely(
+    deliver(guide, (t) => ({
+      subject: t("guidePaidSubject", { name: context.travellerName }),
+      title: t("guidePaidTitle"),
+      paragraphs: [t("guidePaidBody", { name: context.travellerName })],
+      facts: guideFacts(context, t, guideLocale),
+      action: {
+        label: t("guideInboxCta"),
+        url: appUrl(`/${guideLocale}/guide/bookings`),
+      },
+    })),
+  );
+
+  await safely(
+    deliver(traveller, (t) => ({
+      subject: t("guideReceiptSubject", { name: context.guideName }),
+      title: t("guideReceiptTitle"),
+      paragraphs: [t("guideReceiptBody", { name: context.guideName })],
+      facts: guideFacts(context, t, travellerLocale),
+      action: {
+        label: t("viewGuideCta"),
+        url: appUrl(`/${travellerLocale}/guides/${context.guideSlug}`),
+      },
+    })),
+  );
+}
+
+export async function sendGuideCancelledEmail(
+  recipient: Recipient,
+  context: GuideBookingContext,
+  cancelledBy: "TRAVELLER" | "GUIDE",
+  /// Money already sent is between the two of them, so the message says so
+  /// rather than leaving someone waiting for a refund that cannot come.
+  wasPaid: boolean,
+): Promise<void> {
+  const locale = localeFor(recipient.locale);
+
+  await safely(
+    deliver(recipient, (t) => ({
+      subject: t("guideCancelledSubject"),
+      title: t("guideCancelledTitle"),
+      paragraphs: [
+        cancelledBy === "TRAVELLER"
+          ? t("guideCancelledByTraveller", { name: context.travellerName })
+          : t("guideCancelledByGuide", { name: context.guideName }),
+        ...(wasPaid ? [t("guideCancelledMoney")] : []),
+      ],
+      facts: guideFacts(context, t, locale),
     })),
   );
 }
