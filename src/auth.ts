@@ -74,8 +74,37 @@ providers.push(
   }),
 );
 
+/// Cookies on localhost are shared across ports, so every app a developer runs
+/// writes to the same `authjs.session-token` unless told otherwise. When two of
+/// them sign cookies with different secrets, this one reads a cookie it cannot
+/// decrypt, finds no session, and bounces a signed-in person to the login page.
+/// Naming the cookie after the app keeps that from happening.
+const secureCookies = process.env.NODE_ENV === "production";
+const cookiePrefix = secureCookies ? "__Secure-" : "";
+
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  path: "/",
+  secure: secureCookies,
+};
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  cookies: {
+    sessionToken: {
+      name: `${cookiePrefix}mboatour.session-token`,
+      options: cookieOptions,
+    },
+    callbackUrl: {
+      name: `${cookiePrefix}mboatour.callback-url`,
+      options: cookieOptions,
+    },
+    csrfToken: {
+      name: `${cookiePrefix}mboatour.csrf-token`,
+      options: cookieOptions,
+    },
+  },
   // Credentials sign-in requires JWT sessions; the adapter still persists the
   // user and linked OAuth accounts.
   session: { strategy: "jwt" },
