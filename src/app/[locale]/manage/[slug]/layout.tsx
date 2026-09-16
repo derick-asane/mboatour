@@ -31,6 +31,9 @@ export default async function ManageLayout({
     ...(can(membership, "MANAGE_VISITS")
       ? [{ key: "visits" as const, href: `/manage/${slug}/visits`, label: t("visits") }]
       : []),
+    ...(can(membership, "MANAGE_GUIDES")
+      ? [{ key: "guides" as const, href: `/manage/${slug}/guides`, label: t("guides") }]
+      : []),
     ...(can(membership, "MANAGE_MEMBERS")
       ? [{ key: "members" as const, href: `/manage/${slug}/members`, label: t("members") }]
       : []),

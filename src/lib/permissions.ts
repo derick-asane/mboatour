@@ -6,6 +6,7 @@ export const ALL_PERMISSIONS: SitePermission[] = [
   "MANAGE_MEMBERS",
   "MANAGE_BOOKINGS",
   "MANAGE_VISITS",
+  "MANAGE_GUIDES",
 ];
 
 /// Permissions a newly invited admin gets when none are picked explicitly.

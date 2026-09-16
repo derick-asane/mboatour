@@ -15,10 +15,15 @@ import {
 /// That ties them to the server's own disk: on a read-only or multi-instance
 /// host (Vercel and the like) these need to move to object storage instead.
 
-/// Sites, events and chat pictures keep to their own folders.
-export type UploadFolder = "sites" | "events" | "chat";
+/// Sites, events, chat pictures and guide portraits keep to their own folders.
+export type UploadFolder = "sites" | "events" | "chat" | "guides";
 
-const UPLOAD_FOLDERS: readonly UploadFolder[] = ["sites", "events", "chat"];
+const UPLOAD_FOLDERS: readonly UploadFolder[] = [
+  "sites",
+  "events",
+  "chat",
+  "guides",
+];
 
 function directoryFor(folder: UploadFolder): string {
   return path.join(process.cwd(), "public", "uploads", folder);
