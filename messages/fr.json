@@ -30,7 +30,8 @@
     "language": "Langue",
     "admin": "Admin",
     "account": "Votre compte",
-    "guides": "Guides"
+    "guides": "Guides",
+    "guiding": "Guidage"
   },
   "Locales": {
     "en": "English",
@@ -716,7 +717,8 @@
     "declineEndorsement": "Refuser",
     "guideNotVerified": "Non vérifié",
     "guideNotVerifiedHint": "La plateforme n’a pas encore vérifié ce guide.",
-    "paidDirectNotice": "Vous payez le guide directement. Mboatour enregistre l’accord mais ne détient jamais l’argent : un remboursement se règle entre vous et le guide."
+    "paidDirectNotice": "Vous payez le guide directement. Mboatour enregistre l’accord mais ne détient jamais l’argent : un remboursement se règle entre vous et le guide.",
+    "yourRequests": "Vos demandes"
   },
   "Languages": {
     "EN": "Anglais",
@@ -773,6 +775,10 @@
     "ACCEPTED": "Accepté",
     "DECLINED": "Refusé",
     "CANCELLED": "Annulé",
-    "COMPLETED": "Terminé"
+    "COMPLETED": "Terminé",
+    "guidingTitle": "Votre activité de guide",
+    "yourGuideProfile": "Votre profil de guide",
+    "editProfile": "Voir et modifier",
+    "requestsCount": "{count, plural, =0 {Aucune demande} =1 {# demande} other {# demandes}}"
   }
 }

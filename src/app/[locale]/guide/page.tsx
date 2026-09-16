@@ -37,10 +37,17 @@ export default async function GuideProfilePage({
         title={t("yourProfileTitle")}
         description={t("yourProfileSubtitle")}
         actions={
-          profile?.status === "VERIFIED" ? (
-            <Link href={`/guides/${profile.slug}`} className="btn-secondary">
-              {t("viewPublic")}
-            </Link>
+          profile ? (
+            <>
+              <Link href="/guide/bookings" className="btn-secondary">
+                {t("yourRequests")}
+              </Link>
+              {/* Visible before verification too: the owner may always see
+                  their own page, which is how they check their work. */}
+              <Link href={`/guides/${profile.slug}`} className="btn-secondary">
+                {t("viewPublic")}
+              </Link>
+            </>
           ) : null
         }
       />

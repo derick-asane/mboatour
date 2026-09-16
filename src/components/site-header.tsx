@@ -4,6 +4,7 @@ import { BrandMark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { NavLink } from "@/components/nav-link";
 import { isPlatformAdmin } from "@/lib/platform";
+import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { signOutAction } from "@/server/actions/account";
 import { getCurrentUser } from "@/server/session";
@@ -13,6 +14,15 @@ export async function SiteHeader() {
   const common = await getTranslations("Common");
   const user = await getCurrentUser();
 
+  // Shown only to people who actually guide, so it stays out of the way for
+  // everyone else.
+  const guideProfile = user
+    ? await prisma.guideProfile.findUnique({
+        where: { userId: user.id },
+        select: { id: true },
+      })
+    : null;
+
   const initial = (user?.name ?? user?.email ?? "").trim().charAt(0) || "?";
 
   const links = (
@@ -20,6 +30,7 @@ export async function SiteHeader() {
       <NavLink href="/sites">{t("sites")}</NavLink>
       <NavLink href="/guides">{t("guides")}</NavLink>
       {user ? <NavLink href="/dashboard">{t("dashboard")}</NavLink> : null}
+      {guideProfile ? <NavLink href="/guide">{t("guiding")}</NavLink> : null}
       {/* The portal only appears for accounts that can actually open it. */}
       {isPlatformAdmin(user?.platformRole) ? (
         <NavLink href="/admin">{t("admin")}</NavLink>

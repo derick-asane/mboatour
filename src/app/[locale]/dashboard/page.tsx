@@ -30,7 +30,8 @@ export default async function DashboardPage({
   const bookingT = await getTranslations("Booking");
   const format = await getFormatter();
 
-  const [memberships, bookings, visitRequests, guideBookings] = await Promise.all([
+  const [memberships, bookings, visitRequests, guideProfile, guideBookings] =
+    await Promise.all([
     prisma.siteMember.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
@@ -65,6 +66,16 @@ export default async function DashboardPage({
       orderBy: { createdAt: "desc" },
       include: { site: { select: { name: true, slug: true } } },
     }),
+    prisma.guideProfile.findUnique({
+      where: { userId: user.id },
+      select: {
+        slug: true,
+        headline: true,
+        status: true,
+        photoUrl: true,
+        _count: { select: { bookings: true } },
+      },
+    }),
     prisma.guideBooking.findMany({
       where: { userId: user.id },
       orderBy: { startDate: "desc" },
@@ -84,6 +95,7 @@ export default async function DashboardPage({
   ]);
 
   const guideT = await getTranslations("GuideBooking");
+  const guidesT = await getTranslations("Guides");
 
   const stats = [
     { label: t("mySites"), value: memberships.length },
@@ -239,6 +251,60 @@ export default async function DashboardPage({
           </ul>
         )}
       </section>
+
+      {guideProfile ? (
+        <section className="space-y-4">
+          <SectionHeader title={guideT("guidingTitle")} />
+
+          <div className="card flex flex-wrap items-center gap-4">
+            {guideProfile.photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={guideProfile.photoUrl}
+                alt=""
+                className="media-placeholder h-14 w-14 shrink-0 rounded-full border border-line object-cover"
+              />
+            ) : (
+              <span className="avatar h-14 w-14 text-base">
+                {(user.name ?? user.email).trim().charAt(0)}
+              </span>
+            )}
+
+            <div className="min-w-0 flex-1 space-y-1">
+              <p className="flex flex-wrap items-center gap-2 font-medium">
+                {guideT("yourGuideProfile")}
+                <span
+                  className={`badge ${
+                    guideProfile.status === "VERIFIED"
+                      ? "badge-success"
+                      : guideProfile.status === "PENDING"
+                        ? "badge-warning"
+                        : guideProfile.status === "SUSPENDED"
+                          ? "badge-danger"
+                          : ""
+                  }`}
+                >
+                  {guidesT(guideProfile.status)}
+                </span>
+              </p>
+              <p className="truncate text-xs text-muted">
+                {guideProfile.headline}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Link href="/guide" className="btn-secondary btn-sm">
+                {guideT("editProfile")}
+              </Link>
+              <Link href="/guide/bookings" className="btn-secondary btn-sm">
+                {guideT("requestsCount", {
+                  count: guideProfile._count.bookings,
+                })}
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="space-y-4">
         <SectionHeader
