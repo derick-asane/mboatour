@@ -75,6 +75,21 @@ enum PaymentMethod {
   CARD
 }
 
+/// Where the money actually goes. A guide is paid directly, so the platform
+/// records the payment without ever holding it.
+enum PaymentPayee {
+  SITE
+  GUIDE
+}
+
+enum GuideBookingStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+  COMPLETED
+}
+
 enum PaymentStatus {
   PENDING
   PAID
@@ -114,6 +129,7 @@ model User {
   visitRequests        VisitRequest[]  @relation("VisitRequester")
   reviewedVisitRequest VisitRequest[]  @relation("VisitReviewer")
   guideProfile         GuideProfile?
+  guideBookings        GuideBooking[]  @relation("GuideBookingTraveller")
   verifiedGuides       GuideProfile[]  @relation("GuideVerifier")
   decidedEndorsements  GuideEndorsement[] @relation("EndorsementDecider")
   reviews              Review[]        @relation("ReviewAuthor")
@@ -202,6 +218,7 @@ model TouristicSite {
   images        SiteImage[]
   reviews       Review[]
   endorsements  GuideEndorsement[]
+  guideBookings GuideBookingSite[]
 
   /// Kept alongside the reviews so listings and cards need no aggregate query.
   ratingAverage Float?
@@ -391,8 +408,13 @@ model EventChatMute {
 /// this server: the browser keeps the number and sends only the last four
 /// digits, which is all a receipt needs.
 model Payment {
-  id          String        @id @default(cuid())
-  bookingId   String        @unique
+  id             String        @id @default(cuid())
+  bookingId      String?       @unique
+  guideBookingId String?       @unique
+  payee          PaymentPayee  @default(SITE)
+  /// Where it was sent when the payee is a guide: their own mobile money
+  /// number, since the platform never holds the funds.
+  payeeRef       String?
   amountCents Int
   currency    String
   method      PaymentMethod
@@ -409,7 +431,8 @@ model Payment {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking      Booking?      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  guideBooking GuideBooking? @relation(fields: [guideBookingId], references: [id], onDelete: Cascade)
 
   @@index([status])
 }
@@ -483,6 +506,7 @@ model GuideProfile {
   user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   verifiedBy   User?              @relation("GuideVerifier", fields: [verifiedById], references: [id])
   endorsements GuideEndorsement[]
+  bookings     GuideBooking[]
 
   @@index([status])
   @@index([city])
@@ -506,4 +530,45 @@ model GuideEndorsement {
 
   @@unique([guideId, siteId])
   @@index([siteId, status])
+}
+
+/// A traveller hiring a guide, possibly for several sites over several days.
+/// The money is paid straight to the guide, so this records the arrangement
+/// rather than holding anything.
+model GuideBooking {
+  id           String             @id @default(cuid())
+  guideId      String
+  userId       String
+  startDate    DateTime
+  endDate      DateTime?
+  partySize    Int                @default(1)
+  message      String?
+  status       GuideBookingStatus @default(PENDING)
+  /// What the guide will be paid, agreed when the request is made.
+  amountCents  Int
+  currency     String             @default("XAF")
+  responseNote String?
+  respondedAt  DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  guide   GuideProfile       @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  user    User               @relation("GuideBookingTraveller", fields: [userId], references: [id], onDelete: Cascade)
+  sites   GuideBookingSite[]
+  payment Payment?
+
+  @@index([guideId, status])
+  @@index([userId])
+}
+
+/// Which places the guide is being asked to cover.
+model GuideBookingSite {
+  id             String @id @default(cuid())
+  guideBookingId String
+  siteId         String
+
+  guideBooking GuideBooking  @relation(fields: [guideBookingId], references: [id], onDelete: Cascade)
+  site         TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([guideBookingId, siteId])
 }

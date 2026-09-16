@@ -300,7 +300,12 @@
     "guideSubmitted": "Sent for review. The platform team will check it.",
     "guideDecided": "Guide updated.",
     "endorsementRequested": "Endorsement requested.",
-    "endorsementDecided": "Endorsement updated."
+    "endorsementDecided": "Endorsement updated.",
+    "guideRequested": "Request sent. The guide will answer shortly.",
+    "guideAccepted": "Accepted. The traveller can now pay you.",
+    "guideDeclined": "Declined.",
+    "guidePaid": "Paid. The money goes straight to your guide.",
+    "guideBookingCancelled": "Booking cancelled."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -347,7 +352,16 @@
     "pickALanguage": "Pick at least one language you guide in.",
     "guideProfileMissing": "Create your guide profile first.",
     "guideSuspended": "Your profile is suspended. Contact the platform team.",
-    "endorsementNotFound": "That request is gone."
+    "endorsementNotFound": "That request is gone.",
+    "dateInPast": "Pick a date in the future.",
+    "endBeforeStart": "The last day cannot be before the first.",
+    "guideNotAvailable": "This guide is not taking requests.",
+    "cannotBookYourself": "You cannot book yourself.",
+    "alreadyAnswered": "You already answered this request.",
+    "notAcceptedYet": "The guide has not accepted this yet.",
+    "alreadyPaid": "This booking is already paid.",
+    "nothingToPay": "There is nothing to pay on this booking.",
+    "guideHasNoNumber": "This guide has no payment number on their profile yet."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -616,7 +630,6 @@
     "yearsOfExperience": "{count, plural, =1 {# year guiding} other {# years guiding}}",
     "about": "About",
     "rates": "Rates",
-    "bookingComingSoon": "Booking a guide through Mboatour is coming next. For now, use the contact details above.",
     "notPublicYet": "This profile is not listed publicly yet. Only you and the platform team can see it.",
     "endorsementsTitle": "Endorsed by",
     "endorsementsExplain": "A site endorses guides it knows and works with.",
@@ -676,7 +689,8 @@
     "endorse": "Endorse",
     "declineEndorsement": "Decline",
     "guideNotVerified": "Not verified",
-    "guideNotVerifiedHint": "The platform has not checked this guide yet."
+    "guideNotVerifiedHint": "The platform has not checked this guide yet.",
+    "paidDirectNotice": "You pay the guide directly. Mboatour records the arrangement but never holds the money, so a refund is between you and the guide."
   },
   "Languages": {
     "EN": "English",
@@ -691,5 +705,48 @@
     "IT": "Italian",
     "ZH": "Chinese",
     "AR": "Arabic"
+  },
+  "GuideBooking": {
+    "eyebrow": "Guiding",
+    "title": "Request this guide",
+    "close": "Close",
+    "cancel": "Cancel",
+    "send": "Send request",
+    "requestCta": "Request this guide",
+    "startDate": "First day",
+    "endDate": "Last day",
+    "endDateHint": "Leave empty for a single day.",
+    "partySize": "How many people",
+    "amount": "Agreed amount ({currency})",
+    "amountHint": "Their rate is a starting point. What you settle on is between you.",
+    "whichSites": "Where would you like to go?",
+    "whichSitesHint": "Pick as many as you like, or none if you are still deciding.",
+    "message": "Message",
+    "paidDirectNotice": "You pay the guide directly. Mboatour records the arrangement but never holds the money, so a refund is between you and the guide.",
+    "paidDirectShort": "Paid straight to the guide.",
+    "payNow": "Pay {amount}",
+    "inboxTitle": "Guide requests",
+    "inboxSubtitle": "Travellers asking you to take them out.",
+    "yourProfile": "Your profile",
+    "noProfile": "You do not have a guide profile yet.",
+    "createProfile": "Create one",
+    "noRequests": "No requests yet.",
+    "noRequestsHint": "They arrive here once travellers find your profile.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "note": "Note",
+    "people": "{count, plural, =1 {# person} other {# people}}",
+    "guide": "Guide",
+    "paid": "Paid",
+    "cancelBooking": "Cancel",
+    "myGuides": "Guides you booked",
+    "findAGuide": "Find a guide",
+    "noneBooked": "You have not booked a guide yet.",
+    "guideContact": "Reach your guide on {phone}",
+    "PENDING": "Waiting for the guide",
+    "ACCEPTED": "Accepted",
+    "DECLINED": "Declined",
+    "CANCELLED": "Cancelled",
+    "COMPLETED": "Completed"
   }
 }

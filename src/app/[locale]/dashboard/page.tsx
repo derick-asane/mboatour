@@ -2,6 +2,10 @@ import { getFormatter, getTranslations, setRequestLocale } from "next-intl/serve
 
 import { CancelBookingButton, CancelVisitButton } from "@/app/[locale]/dashboard/cancel-buttons";
 import { EmptyState } from "@/components/empty-state";
+import {
+  CancelGuideBooking,
+  PayGuide,
+} from "@/components/guides/guide-booking-controls";
 import { SectionHeader, PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { Link } from "@/i18n/navigation";
@@ -26,7 +30,7 @@ export default async function DashboardPage({
   const bookingT = await getTranslations("Booking");
   const format = await getFormatter();
 
-  const [memberships, bookings, visitRequests] = await Promise.all([
+  const [memberships, bookings, visitRequests, guideBookings] = await Promise.all([
     prisma.siteMember.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
@@ -61,7 +65,25 @@ export default async function DashboardPage({
       orderBy: { createdAt: "desc" },
       include: { site: { select: { name: true, slug: true } } },
     }),
+    prisma.guideBooking.findMany({
+      where: { userId: user.id },
+      orderBy: { startDate: "desc" },
+      include: {
+        guide: {
+          select: {
+            slug: true,
+            phone: true,
+            whatsapp: true,
+            user: { select: { name: true } },
+          },
+        },
+        sites: { include: { site: { select: { name: true, slug: true } } } },
+        payment: { select: { status: true } },
+      },
+    }),
   ]);
+
+  const guideT = await getTranslations("GuideBooking");
 
   const stats = [
     { label: t("mySites"), value: memberships.length },
@@ -211,6 +233,102 @@ export default async function DashboardPage({
                     </Link>
                     <CancelBookingButton bookingId={booking.id} />
                   </>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeader
+          title={guideT("myGuides")}
+          actions={
+            <Link href="/guides" className="link text-sm">
+              {guideT("findAGuide")}
+            </Link>
+          }
+        />
+
+        {guideBookings.length === 0 ? (
+          <EmptyState title={guideT("noneBooked")} />
+        ) : (
+          <ul className="space-y-3">
+            {guideBookings.map((booking) => (
+              <li key={booking.id} className="card space-y-3">
+                <div className="flex flex-wrap items-start gap-3">
+                  <div className="min-w-0 flex-1 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Link
+                        href={`/guides/${booking.guide.slug}`}
+                        className="font-medium hover:text-accent"
+                      >
+                        {booking.guide.user.name ?? guideT("guide")}
+                      </Link>
+                      <span
+                        className={`badge ${
+                          booking.status === "ACCEPTED"
+                            ? "badge-success"
+                            : booking.status === "PENDING"
+                              ? "badge-warning"
+                              : "badge-danger"
+                        }`}
+                      >
+                        {guideT(booking.status)}
+                      </span>
+                      {booking.payment?.status === "PAID" ? (
+                        <span className="badge badge-success">
+                          {guideT("paid")}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p className="text-xs text-muted">
+                      {format.dateTime(booking.startDate, { dateStyle: "medium" })}
+                      {booking.endDate
+                        ? ` – ${format.dateTime(booking.endDate, { dateStyle: "medium" })}`
+                        : ""}
+                      {" · "}
+                      {formatMoney(booking.amountCents, booking.currency, locale)}
+                    </p>
+
+                    {booking.sites.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {booking.sites.map((entry) => (
+                          <span key={entry.id} className="badge">
+                            {entry.site.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {booking.status === "ACCEPTED" && booking.guide.phone ? (
+                      <p className="text-xs text-faint">
+                        {guideT("guideContact", { phone: booking.guide.phone })}
+                      </p>
+                    ) : null}
+
+                    {booking.responseNote ? (
+                      <p className="text-xs text-faint">{booking.responseNote}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                {booking.status === "ACCEPTED" &&
+                booking.payment?.status !== "PAID" &&
+                booking.amountCents > 0 ? (
+                  <PayGuide
+                    bookingId={booking.id}
+                    amountLabel={formatMoney(
+                      booking.amountCents,
+                      booking.currency,
+                      locale,
+                    )}
+                  />
+                ) : null}
+
+                {booking.status === "PENDING" || booking.status === "ACCEPTED" ? (
+                  <CancelGuideBooking bookingId={booking.id} />
                 ) : null}
               </li>
             ))}

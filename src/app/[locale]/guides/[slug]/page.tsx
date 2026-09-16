@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { RequestGuideDialog } from "@/components/guides/request-guide-dialog";
 import { PageHeader } from "@/components/page-header";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
@@ -34,6 +35,14 @@ export default async function GuidePage({
   if (!guide) notFound();
 
   const viewer = await getCurrentUser();
+
+  // Somewhere to take them: only published sites can be named in a request.
+  const sites = await prisma.touristicSite.findMany({
+    where: { published: true },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+    take: 50,
+  });
 
   // An unchecked profile is visible to its owner and to the platform, so a
   // guide can see their own page while it waits.
@@ -128,7 +137,17 @@ export default async function GuidePage({
               ))}
             </dl>
           )}
-          <p className="hint">{t("bookingComingSoon")}</p>
+          {guide.status === "VERIFIED" && viewer?.id !== guide.userId ? (
+            <RequestGuideDialog
+              guideId={guide.id}
+              guideName={guide.user.name ?? t("guide")}
+              currency={guide.currency}
+              suggestedAmountCents={guide.dailyRateCents ?? guide.hourlyRateCents}
+              sites={sites}
+            />
+          ) : null}
+
+          <p className="hint">{t("paidDirectNotice")}</p>
         </section>
 
         <section className="card space-y-3">
