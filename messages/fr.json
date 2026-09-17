@@ -718,7 +718,14 @@
     "guideNotVerified": "Non vérifié",
     "guideNotVerifiedHint": "La plateforme n’a pas encore vérifié ce guide.",
     "paidDirectNotice": "Vous payez le guide directement. Mboatour enregistre l’accord mais ne détient jamais l’argent : un remboursement se règle entre vous et le guide.",
-    "yourRequests": "Vos demandes"
+    "yourRequests": "Vos demandes",
+    "endorseMeTitle": "Vous guidez ici ?",
+    "endorseMeHint": "Demandez à {site} de vous recommander. Son badge apparaît sur votre profil.",
+    "endorseMeCta": "Demander une recommandation",
+    "endorseMeAgain": "Redemander",
+    "endorseMePending": "Votre demande est chez ce site.",
+    "endorseMeApproved": "{site} vous recommande.",
+    "endorseMeRejected": "Ce site a refusé pour le moment."
   },
   "Languages": {
     "EN": "Anglais",

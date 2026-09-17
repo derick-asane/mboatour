@@ -718,7 +718,14 @@
     "guideNotVerified": "Not verified",
     "guideNotVerifiedHint": "The platform has not checked this guide yet.",
     "paidDirectNotice": "You pay the guide directly. Mboatour records the arrangement but never holds the money, so a refund is between you and the guide.",
-    "yourRequests": "Your requests"
+    "yourRequests": "Your requests",
+    "endorseMeTitle": "Guiding here?",
+    "endorseMeHint": "Ask {site} to vouch for you. Their badge shows on your profile.",
+    "endorseMeCta": "Ask for an endorsement",
+    "endorseMeAgain": "Ask again",
+    "endorseMePending": "Your request is with this site.",
+    "endorseMeApproved": "{site} endorses you.",
+    "endorseMeRejected": "This site declined for now."
   },
   "Languages": {
     "EN": "English",

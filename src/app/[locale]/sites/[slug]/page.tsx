@@ -5,6 +5,7 @@ import { VisitRequestForm } from "@/app/[locale]/sites/[slug]/visit-request-form
 import { BookEventDialog } from "@/components/booking/book-event-dialog";
 import { CoverImage } from "@/components/cover-image";
 import { EmptyState } from "@/components/empty-state";
+import { RequestEndorsement } from "@/components/guides/request-endorsement";
 import { SiteLocationCard } from "@/components/map/site-location-card";
 import { ReviewForm } from "@/components/reviews/review-form";
 import { ReviewList } from "@/components/reviews/review-list";
@@ -101,6 +102,19 @@ export default async function SiteDetailPage({
   ]);
 
   const myReview = user ? reviews.find((r) => r.userId === user.id) : undefined;
+
+  const guideProfile = user
+    ? await prisma.guideProfile.findUnique({
+        where: { userId: user.id },
+        select: {
+          id: true,
+          endorsements: {
+            where: { siteId: site.id },
+            select: { status: true, note: true },
+          },
+        },
+      })
+    : null;
 
   const place = [site.address, site.city, site.country].filter(Boolean).join(", ");
 
@@ -486,6 +500,15 @@ export default async function SiteDetailPage({
               latitude={site.latitude}
               longitude={site.longitude}
               address={place || null}
+            />
+          ) : null}
+
+          {guideProfile ? (
+            <RequestEndorsement
+              siteId={site.id}
+              siteName={site.name}
+              status={guideProfile.endorsements[0]?.status ?? null}
+              note={guideProfile.endorsements[0]?.note ?? null}
             />
           ) : null}
 
