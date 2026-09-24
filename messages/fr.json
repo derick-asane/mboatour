@@ -362,7 +362,8 @@
     "notAcceptedYet": "Le guide n’a pas encore accepté.",
     "alreadyPaid": "Cette réservation est déjà payée.",
     "nothingToPay": "Il n’y a rien à payer sur cette réservation.",
-    "guideHasNoNumber": "Ce guide n’a pas encore de numéro de paiement sur son profil."
+    "guideHasNoNumber": "Ce guide n’a pas encore de numéro de paiement sur son profil.",
+    "guideNotBeenYet": "Vous ne pouvez noter un guide qu’après une sortie que vous avez payée."
   },
   "Categories": {
     "MUSEUM": "Musée",
@@ -725,7 +726,11 @@
     "endorseMeAgain": "Redemander",
     "endorseMePending": "Votre demande est chez ce site.",
     "endorseMeApproved": "{site} vous recommande.",
-    "endorseMeRejected": "Ce site a refusé pour le moment."
+    "endorseMeRejected": "Ce site a refusé pour le moment.",
+    "rateThisGuide": "Noter ce guide",
+    "reviewPlaceholder": "Comment s’est passée la journée ? Que doit savoir le prochain voyageur ?",
+    "guideNotBeenYetHint": "Vous pourrez noter un guide une fois terminée une sortie que vous avez payée.",
+    "replyFromGuide": "Réponse du guide"
   },
   "Languages": {
     "EN": "Anglais",

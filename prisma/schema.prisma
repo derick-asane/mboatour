@@ -132,6 +132,8 @@ model User {
   guideBookings        GuideBooking[]  @relation("GuideBookingTraveller")
   verifiedGuides       GuideProfile[]  @relation("GuideVerifier")
   decidedEndorsements  GuideEndorsement[] @relation("EndorsementDecider")
+  guideReviews         GuideReview[]   @relation("GuideReviewAuthor")
+  hiddenGuideReviews   GuideReview[]   @relation("GuideReviewModerator")
   reviews              Review[]        @relation("ReviewAuthor")
   hiddenReviews        Review[]        @relation("ReviewModerator")
   reviewReplies        Review[]        @relation("ReviewResponder")
@@ -506,6 +508,11 @@ model GuideProfile {
   user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   verifiedBy   User?              @relation("GuideVerifier", fields: [verifiedById], references: [id])
   endorsements GuideEndorsement[]
+  reviews      GuideReview[]
+
+  /// Kept beside the reviews so the directory needs no aggregate query.
+  ratingAverage Float?
+  ratingCount   Int      @default(0)
   bookings     GuideBooking[]
 
   @@index([status])
@@ -571,4 +578,33 @@ model GuideBookingSite {
   site         TouristicSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@unique([guideBookingId, siteId])
+}
+
+/// A rating for a guide, left only by a traveller whose outing with them was
+/// paid for and finished. A guide takes money from strangers, so the proof for
+/// a review has to be at least as strong as for a site.
+model GuideReview {
+  id        String    @id @default(cuid())
+  guideId   String
+  userId    String
+  rating    Int
+  body      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
+
+  /// The guide may answer, never remove: a guide who could delete bad reviews
+  /// would make the good ones worthless.
+  reply     String?
+  repliedAt DateTime?
+
+  hiddenAt   DateTime?
+  hiddenById String?
+
+  guide    GuideProfile @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  user     User         @relation("GuideReviewAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  hiddenBy User?        @relation("GuideReviewModerator", fields: [hiddenById], references: [id])
+
+  @@unique([guideId, userId])
+  @@index([guideId, createdAt])
 }

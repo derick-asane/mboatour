@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
+import { RatingSummary } from "@/components/reviews/stars";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
 import { GUIDE_LANGUAGES, isGuideLanguage } from "@/lib/guides";
@@ -22,6 +23,7 @@ export default async function GuidesPage({
   const t = await getTranslations("Guides");
   const languages = await getTranslations("Languages");
   const common = await getTranslations("Common");
+  const reviews = await getTranslations("Reviews");
 
   const query = q?.trim();
   const filter = language && isGuideLanguage(language) ? language : null;
@@ -53,6 +55,8 @@ export default async function GuidesPage({
       dailyRateCents: true,
       hourlyRateCents: true,
       currency: true,
+      ratingAverage: true,
+      ratingCount: true,
       user: { select: { name: true } },
       _count: { select: { endorsements: true } },
     },
@@ -157,6 +161,12 @@ export default async function GuidesPage({
                       {t("endorsedBy", { count: guide._count.endorsements })}
                     </span>
                   ) : null}
+
+                  <RatingSummary
+                    average={guide.ratingAverage}
+                    count={guide.ratingCount}
+                    label={reviews("count", { count: guide.ratingCount })}
+                  />
                 </div>
               </Link>
             );

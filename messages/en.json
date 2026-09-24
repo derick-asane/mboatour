@@ -362,7 +362,8 @@
     "notAcceptedYet": "The guide has not accepted this yet.",
     "alreadyPaid": "This booking is already paid.",
     "nothingToPay": "There is nothing to pay on this booking.",
-    "guideHasNoNumber": "This guide has no payment number on their profile yet."
+    "guideHasNoNumber": "This guide has no payment number on their profile yet.",
+    "guideNotBeenYet": "You can only rate a guide after an outing you paid for."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -725,7 +726,11 @@
     "endorseMeAgain": "Ask again",
     "endorseMePending": "Your request is with this site.",
     "endorseMeApproved": "{site} endorses you.",
-    "endorseMeRejected": "This site declined for now."
+    "endorseMeRejected": "This site declined for now.",
+    "rateThisGuide": "Rate this guide",
+    "reviewPlaceholder": "How was the day? What should the next traveller know?",
+    "guideNotBeenYetHint": "You can rate a guide once an outing you paid for is over.",
+    "replyFromGuide": "Reply from the guide"
   },
   "Languages": {
     "EN": "English",

@@ -1,13 +1,17 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { GuideReviewControls } from "@/components/guides/guide-review-controls";
+import { GuideReviewForm } from "@/components/guides/guide-review-form";
 import { RequestGuideDialog } from "@/components/guides/request-guide-dialog";
 import { PageHeader } from "@/components/page-header";
+import { RatingSummary, Stars } from "@/components/reviews/stars";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
 import { isGuideLanguage } from "@/lib/guides";
 import { isPlatformAdmin } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
+import { canReviewGuide } from "@/server/guide-reviews";
 import { getCurrentUser } from "@/server/session";
 
 export default async function GuidePage({
@@ -53,6 +57,47 @@ export default async function GuidePage({
 
   if (!visible) notFound();
 
+  const reviewsT = await getTranslations("Reviews");
+  const format = await getFormatter();
+
+  const [reviews, eligibility] = await Promise.all([
+    prisma.guideReview.findMany({
+      where: {
+        guideId: guide.id,
+        // A hidden review stays visible to its author and to the platform, so
+        // nobody wonders where their words went.
+        ...(viewer && isPlatformAdmin(viewer.platformRole)
+          ? {}
+          : {
+              OR: [
+                { hiddenAt: null },
+                ...(viewer ? [{ userId: viewer.id }] : []),
+              ],
+            }),
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        rating: true,
+        body: true,
+        createdAt: true,
+        editedAt: true,
+        hiddenAt: true,
+        reply: true,
+        repliedAt: true,
+        userId: true,
+        user: { select: { name: true, email: true } },
+      },
+    }),
+    canReviewGuide(viewer?.id ?? null, { id: guide.id, userId: guide.userId }),
+  ]);
+
+  const myReview = viewer
+    ? reviews.find((review) => review.userId === viewer.id)
+    : undefined;
+
+  const isGuideOwner = viewer?.id === guide.userId;
+
   const rates = [
     guide.hourlyRateCents !== null
       ? {
@@ -94,6 +139,14 @@ export default async function GuidePage({
             title={guide.user.name ?? t("guide")}
             description={guide.headline}
           />
+
+          <div className="mt-2">
+            <RatingSummary
+              average={guide.ratingAverage}
+              count={guide.ratingCount}
+              label={reviewsT("count", { count: guide.ratingCount })}
+            />
+          </div>
         </div>
       </div>
 
@@ -171,6 +224,96 @@ export default async function GuidePage({
           <p className="hint">{t("endorsementsExplain")}</p>
         </section>
       </div>
+
+      <section className="space-y-4">
+        <h2 className="section-title">{reviewsT("title")}</h2>
+
+        {eligibility.allowed ? (
+          <GuideReviewForm
+            guideId={guide.id}
+            currentRating={myReview?.rating ?? null}
+            currentBody={myReview?.body ?? null}
+          />
+        ) : eligibility.reason === "ownProfile" ? null : (
+          <p className="hint">
+            {eligibility.reason === "signedOut"
+              ? reviewsT("signInToReview")
+              : t("guideNotBeenYetHint")}
+          </p>
+        )}
+
+        {reviews.length === 0 ? (
+          <p className="empty-state">{reviewsT("none")}</p>
+        ) : (
+          <ul className="space-y-4">
+            {reviews.map((review) => {
+              const author =
+                review.user.name ?? review.user.email.split("@")[0];
+              const mine = review.userId === viewer?.id;
+
+              return (
+                <li
+                  key={review.id}
+                  className={`card space-y-3 ${review.hiddenAt ? "opacity-60" : ""}`}
+                >
+                  <div className="flex flex-wrap items-start gap-3">
+                    <span className="avatar shrink-0">
+                      {author.trim().charAt(0) || "?"}
+                    </span>
+
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                        {mine ? reviewsT("you") : author}
+                        <Stars rating={review.rating} className="h-3.5 w-3.5" />
+                        {review.hiddenAt ? (
+                          <span className="badge badge-danger">
+                            {reviewsT("hidden")}
+                          </span>
+                        ) : null}
+                      </p>
+                      <p className="text-xs text-faint">
+                        {format.dateTime(review.createdAt, { dateStyle: "medium" })}
+                        {review.editedAt ? ` · ${reviewsT("editedMark")}` : ""}
+                      </p>
+                    </div>
+                  </div>
+
+                  {review.body ? (
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-muted">
+                      {review.body}
+                    </p>
+                  ) : null}
+
+                  {review.reply ? (
+                    <div className="rounded-xl border border-line surface-muted p-3">
+                      <p className="text-xs font-medium">
+                        {t("replyFromGuide")}
+                        {review.repliedAt
+                          ? ` · ${format.dateTime(review.repliedAt, { dateStyle: "medium" })}`
+                          : ""}
+                      </p>
+                      <p className="mt-1 whitespace-pre-line text-sm text-muted">
+                        {review.reply}
+                      </p>
+                    </div>
+                  ) : null}
+
+                  <GuideReviewControls
+                    reviewId={review.id}
+                    isMine={mine}
+                    isGuide={isGuideOwner}
+                    hidden={review.hiddenAt !== null}
+                    canModerate={Boolean(
+                      viewer && isPlatformAdmin(viewer.platformRole),
+                    )}
+                    currentReply={review.reply}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
