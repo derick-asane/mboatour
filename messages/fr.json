@@ -602,7 +602,8 @@
     "inboxEmptyBrowse": "Trouver un événement",
     "inboxEmptyGuides": "Trouver un guide",
     "roleGuide": "Votre guide",
-    "roleTraveller": "Voyageur"
+    "roleTraveller": "Voyageur",
+    "editWindowHint": "Vous pouvez corriger ce message pendant {minutes} minutes après l’envoi."
   },
   "Booking": {
     "title": "Réserver cet événement",

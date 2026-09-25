@@ -221,6 +221,9 @@ export function ChatRoom({
                         maxLength={MAX_MESSAGE_LENGTH}
                         autoFocus
                         required
+                        onKeyDown={(event) => {
+                          if (event.key === "Escape") setEditingId(null);
+                        }}
                       />
                       <div className="flex gap-2">
                         <button type="submit" className="btn-primary btn-sm">
@@ -269,15 +272,22 @@ export function ChatRoom({
                   )}
 
                   {!message.removed && editingId !== message.id ? (
-                    <div className="mt-1 flex flex-wrap gap-3">
+                    <div
+                      className={`mt-1 flex flex-wrap items-center gap-3 ${
+                        mine ? "justify-end" : ""
+                      }`}
+                    >
                       {/* Only the author, and only while the window is open. The
                           server checks the same thing; this just hides a button
                           that would fail. */}
                       {mine && editWindowOpen(new Date(message.createdAt), new Date(now)) ? (
                         <button
                           type="button"
-                          className="text-xs text-faint hover:text-accent"
+                          className="text-xs font-medium text-muted underline decoration-dotted underline-offset-2 hover:text-accent"
                           onClick={() => setEditingId(message.id)}
+                          title={t("editWindowHint", {
+                            minutes: MESSAGE_EDIT_WINDOW_MINUTES,
+                          })}
                         >
                           {t("edit")}
                         </button>
@@ -288,7 +298,7 @@ export function ChatRoom({
                           <input type="hidden" name="messageId" value={message.id} />
                           <button
                             type="submit"
-                            className="text-xs text-faint hover:text-danger"
+                            className="text-xs font-medium text-muted underline decoration-dotted underline-offset-2 hover:text-danger"
                           >
                             {t("remove")}
                           </button>
