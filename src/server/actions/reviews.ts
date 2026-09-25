@@ -50,7 +50,11 @@ export async function submitReviewAction(
 
   const eligibility = await canReviewSite(user.id, siteId);
 
-  if (!eligibility.allowed) return failure("notBeenYet");
+  // Says which it is: running the site and never having been are different
+  // answers, and the reader deserves the right one.
+  if (!eligibility.allowed) {
+    return failure(eligibility.reason === "ownSite" ? "ownSite" : "notBeenYet");
+  }
 
   const site = await prisma.touristicSite.findUnique({
     where: { id: siteId },

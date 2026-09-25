@@ -9,13 +9,22 @@ export { MAX_RATING, MIN_RATING };
 export type ReviewEligibility =
   | { allowed: true }
   /// Why not, so the page can say something better than "no".
-  | { allowed: false; reason: "notBeenYet" | "signedOut" };
+  | { allowed: false; reason: "notBeenYet" | "signedOut" | "ownSite" };
 
 export async function canReviewSite(
   userId: string | null,
   siteId: string,
 ): Promise<ReviewEligibility> {
   if (!userId) return { allowed: false, reason: "signedOut" };
+
+  // Rating the site you run is not a review of anything. The same reasoning
+  // already blocks a guide from rating themselves.
+  const membership = await prisma.siteMember.findUnique({
+    where: { userId_siteId: { userId, siteId } },
+    select: { id: true },
+  });
+
+  if (membership) return { allowed: false, reason: "ownSite" };
 
   const now = new Date();
 

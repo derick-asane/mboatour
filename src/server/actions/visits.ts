@@ -48,6 +48,15 @@ export async function requestVisitAction(
 
   if (!site?.published) return failure("siteNotFound");
 
+  // Nobody asks their own team for permission to come in. Checked here as well
+  // as hidden in the page, because a form can always be submitted by hand.
+  const membership = await prisma.siteMember.findUnique({
+    where: { userId_siteId: { userId: user.id, siteId } },
+    select: { id: true },
+  });
+
+  if (membership) return failure("ownSite");
+
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 

@@ -132,7 +132,8 @@
     "signInToRequest": "Sign in to request a visit",
     "manageCta": "Manage this site",
     "pendingVisitNotice": "You already have a pending request for this site.",
-    "gallery": "Photos"
+    "gallery": "Photos",
+    "ownSiteNotice": "This is your site, so there is nothing to request."
   },
   "Events": {
     "upcoming": "Upcoming events",
@@ -363,7 +364,8 @@
     "alreadyPaid": "This booking is already paid.",
     "nothingToPay": "There is nothing to pay on this booking.",
     "guideHasNoNumber": "This guide has no payment number on their profile yet.",
-    "guideNotBeenYet": "You can only rate a guide after an outing you paid for."
+    "guideNotBeenYet": "You can only rate a guide after an outing you paid for.",
+    "ownSite": "This is your own site."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -639,7 +641,8 @@
     "replyPlaceholder": "Answer as the site team.",
     "replyFrom": "Reply from {site}",
     "notBeenYet": "You can review this site once you have been on a booked event or an approved visit.",
-    "signInToReview": "Sign in to leave a review."
+    "signInToReview": "Sign in to leave a review.",
+    "ownSiteNotice": "You cannot review a site you run."
   },
   "Guides": {
     "eyebrow": "Tour guides",

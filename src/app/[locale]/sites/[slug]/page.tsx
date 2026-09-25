@@ -453,7 +453,9 @@ export default async function SiteDetailPage({
               <p className="hint">
                 {eligibility.reason === "signedOut"
                   ? reviewsT("signInToReview")
-                  : reviewsT("notBeenYet")}
+                  : eligibility.reason === "ownSite"
+                    ? reviewsT("ownSiteNotice")
+                    : reviewsT("notBeenYet")}
               </p>
             )}
 
@@ -518,7 +520,9 @@ export default async function SiteDetailPage({
               <p className="hint">{t("requestVisitSubtitle")}</p>
             </div>
 
-            {!user ? (
+            {membership ? (
+              <p className="alert">{t("ownSiteNotice")}</p>
+            ) : !user ? (
               <Link href="/login" className="btn-secondary w-full">
                 {t("signInToRequest")}
               </Link>
