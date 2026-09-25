@@ -34,8 +34,8 @@ export default async function GuideBookingChatPage({
   const messages = await listGuideMessages(bookingId);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="mx-auto flex max-w-3xl flex-col gap-4 lg:-my-10 lg:h-[calc(100dvh-3.5rem)] lg:py-6">
+      <div className="flex shrink-0 flex-wrap items-end justify-between gap-4">
         <div className="flex items-center gap-4">
           {access.counterpart.photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -76,7 +76,7 @@ export default async function GuideBookingChatPage({
       </div>
 
       {access.siteNames.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex shrink-0 flex-wrap gap-2">
           {access.siteNames.map((name) => (
             <span key={name} className="badge">
               {name}
@@ -85,9 +85,11 @@ export default async function GuideBookingChatPage({
         </div>
       ) : null}
 
-      {access.closed ? <p className="alert">{t("closedNotice")}</p> : null}
+      {access.closed ? (
+        <p className="alert shrink-0">{t("closedNotice")}</p>
+      ) : null}
 
-      <div className="h-[30rem] sm:h-[34rem]">
+      <div className="h-[68dvh] min-h-0 lg:h-auto lg:flex-1">
         <ChatRoom
           endpoint={`/api/guide-bookings/${bookingId}/messages`}
           hiddenFields={{ bookingId }}

@@ -69,8 +69,8 @@ export default async function EventChatPage({
     }));
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="flex flex-col gap-4 lg:-my-10 lg:h-[calc(100dvh-3.5rem)] lg:py-6">
+      <div className="flex shrink-0 flex-wrap items-end justify-between gap-4">
         {/* The photo says which room this is at a glance, which matters once
             somebody is in more than one chat. */}
         <div className="flex items-center gap-4">
@@ -100,9 +100,9 @@ export default async function EventChatPage({
       </div>
 
       {access.closed ? (
-        <p className="alert">{t("closedNotice")}</p>
+        <p className="alert shrink-0">{t("closedNotice")}</p>
       ) : (
-        <p className="hint">
+        <p className="hint shrink-0">
           {t("openUntil", {
             date: format.dateTime(chatClosesAt(access.event), {
               dateStyle: "medium",
@@ -111,10 +111,12 @@ export default async function EventChatPage({
         </p>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_15rem]">
-        <ChatList chats={myChats} activeEventId={eventId} />
+      <div className="grid min-h-0 gap-5 lg:flex-1 lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_minmax(0,1fr)_15rem]">
+        <div className="min-h-0 lg:overflow-y-auto">
+          <ChatList chats={myChats} activeEventId={eventId} />
+        </div>
 
-        <div className="h-[32rem] lg:h-[36rem]">
+        <div className="h-[68dvh] min-h-0 lg:h-auto">
           <ChatRoom
             endpoint={`/api/events/${eventId}/messages`}
             hiddenFields={{ eventId }}
@@ -130,7 +132,7 @@ export default async function EventChatPage({
           />
         </div>
 
-        <div className="lg:col-span-2 xl:col-span-1">
+        <div className="min-h-0 lg:col-span-2 lg:overflow-y-auto xl:col-span-1">
           <Participants
             eventId={eventId}
             participants={participants}
