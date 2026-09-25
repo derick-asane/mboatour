@@ -69,7 +69,10 @@ export default async function GuidesPage({
       ratingAverage: true,
       ratingCount: true,
       user: { select: { name: true } },
-      _count: { select: { endorsements: true } },
+      // Only the ones a site actually granted: a request still waiting, or one
+      // that was turned down, is not an endorsement and must not be counted as
+      // one on a public card.
+      _count: { select: { endorsements: { where: { status: "APPROVED" } } } },
     },
   });
 

@@ -49,7 +49,10 @@ export default async function AdminGuidesPage({
     orderBy: [{ status: "asc" }, { updatedAt: "desc" }],
     include: {
       user: { select: { name: true, email: true } },
-      _count: { select: { endorsements: true } },
+      // Only the ones a site actually granted: a request still waiting, or one
+      // that was turned down, is not an endorsement and must not be counted as
+      // one on a public card.
+      _count: { select: { endorsements: { where: { status: "APPROVED" } } } },
     },
   });
 
