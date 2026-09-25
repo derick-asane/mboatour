@@ -132,8 +132,7 @@
     "signInToRequest": "Sign in to request a visit",
     "manageCta": "Manage this site",
     "pendingVisitNotice": "You already have a pending request for this site.",
-    "gallery": "Photos",
-    "ownSiteNotice": "This is your site, so there is nothing to request."
+    "gallery": "Photos"
   },
   "Events": {
     "upcoming": "Upcoming events",
@@ -641,8 +640,7 @@
     "replyPlaceholder": "Answer as the site team.",
     "replyFrom": "Reply from {site}",
     "notBeenYet": "You can review this site once you have been on a booked event or an approved visit.",
-    "signInToReview": "Sign in to leave a review.",
-    "ownSiteNotice": "You cannot review a site you run."
+    "signInToReview": "Sign in to leave a review."
   },
   "Guides": {
     "eyebrow": "Tour guides",

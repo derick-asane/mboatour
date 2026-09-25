@@ -450,13 +450,13 @@ export default async function SiteDetailPage({
                 currentBody={myReview?.body ?? null}
               />
             ) : (
-              <p className="hint">
-                {eligibility.reason === "signedOut"
-                  ? reviewsT("signInToReview")
-                  : eligibility.reason === "ownSite"
-                    ? reviewsT("ownSiteNotice")
+              eligibility.reason === "ownSite" ? null : (
+                <p className="hint">
+                  {eligibility.reason === "signedOut"
+                    ? reviewsT("signInToReview")
                     : reviewsT("notBeenYet")}
-              </p>
+                </p>
+              )
             )}
 
             <ReviewList
@@ -514,24 +514,24 @@ export default async function SiteDetailPage({
             />
           ) : null}
 
-          <section className="card space-y-4">
-            <div>
-              <h2 className="section-title text-base">{t("requestVisit")}</h2>
-              <p className="hint">{t("requestVisitSubtitle")}</p>
-            </div>
+          {membership ? null : (
+            <section className="card space-y-4">
+              <div>
+                <h2 className="section-title text-base">{t("requestVisit")}</h2>
+                <p className="hint">{t("requestVisitSubtitle")}</p>
+              </div>
 
-            {membership ? (
-              <p className="alert">{t("ownSiteNotice")}</p>
-            ) : !user ? (
-              <Link href="/login" className="btn-secondary w-full">
-                {t("signInToRequest")}
-              </Link>
-            ) : pendingVisit ? (
-              <p className="alert">{t("pendingVisitNotice")}</p>
-            ) : (
-              <VisitRequestForm siteId={site.id} />
-            )}
-          </section>
+              {!user ? (
+                <Link href="/login" className="btn-secondary w-full">
+                  {t("signInToRequest")}
+                </Link>
+              ) : pendingVisit ? (
+                <p className="alert">{t("pendingVisitNotice")}</p>
+              ) : (
+                <VisitRequestForm siteId={site.id} />
+              )}
+            </section>
+          )}
         </aside>
       </div>
     </div>

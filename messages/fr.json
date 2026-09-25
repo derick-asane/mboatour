@@ -132,8 +132,7 @@
     "signInToRequest": "Connectez-vous pour demander une visite",
     "manageCta": "Gérer ce site",
     "pendingVisitNotice": "Vous avez déjà une demande en attente pour ce site.",
-    "gallery": "Photos",
-    "ownSiteNotice": "C’est votre site : il n’y a rien à demander."
+    "gallery": "Photos"
   },
   "Events": {
     "upcoming": "Événements à venir",
@@ -641,8 +640,7 @@
     "replyPlaceholder": "Répondez au nom de l’équipe du site.",
     "replyFrom": "Réponse de {site}",
     "notBeenYet": "Vous pourrez donner un avis après un événement réservé ou une visite approuvée.",
-    "signInToReview": "Connectez-vous pour laisser un avis.",
-    "ownSiteNotice": "Vous ne pouvez pas noter un site que vous gérez."
+    "signInToReview": "Connectez-vous pour laisser un avis."
   },
   "Guides": {
     "eyebrow": "Guides touristiques",
