@@ -18,10 +18,6 @@ const messageSchema = z.object({
   body: z.string().trim().max(MAX_MESSAGE_LENGTH),
 });
 
-function chatPath(bookingId: string): string {
-  return `/guide-bookings/${bookingId}/chat`;
-}
-
 export async function postGuideMessageAction(
   _previous: ActionState,
   formData: FormData,
@@ -62,7 +58,7 @@ export async function postGuideMessageAction(
     },
   });
 
-  revalidatePath(chatPath(parsed.data.bookingId));
+  revalidatePath("/chats", "layout");
 
   return {};
 }
@@ -103,7 +99,7 @@ export async function deleteGuideMessageAction(
   // everything under the upload folder is served publicly.
   if (message.attachmentUrl) await deleteUploadedImage(message.attachmentUrl);
 
-  revalidatePath(chatPath(message.guideBookingId));
+  revalidatePath("/chats", "layout");
 
   return { success: "messageRemoved" };
 }
@@ -152,7 +148,7 @@ export async function editGuideMessageAction(
     data: { body: parsed.data.body, editedAt: new Date() },
   });
 
-  revalidatePath(chatPath(message.guideBookingId));
+  revalidatePath("/chats", "layout");
 
   return { success: "messageEdited" };
 }

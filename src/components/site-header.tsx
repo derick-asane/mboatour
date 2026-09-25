@@ -30,6 +30,7 @@ export async function SiteHeader() {
       <NavLink href="/sites">{t("sites")}</NavLink>
       <NavLink href="/guides">{t("guides")}</NavLink>
       {user ? <NavLink href="/dashboard">{t("dashboard")}</NavLink> : null}
+      {user ? <NavLink href="/chats">{t("chats")}</NavLink> : null}
       {guideProfile ? <NavLink href="/guide">{t("guiding")}</NavLink> : null}
       {/* The portal only appears for accounts that can actually open it. */}
       {isPlatformAdmin(user?.platformRole) ? (

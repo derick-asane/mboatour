@@ -59,7 +59,7 @@ export async function postMessageAction(
     },
   });
 
-  revalidatePath(`/sites/${access.event.siteSlug}/events/${access.event.id}/chat`);
+  revalidatePath("/chats", "layout");
 
   return {};
 }
@@ -103,7 +103,7 @@ export async function deleteMessageAction(
   // reachable: everything under the upload folder is served publicly.
   if (message.attachmentUrl) await deleteUploadedImage(message.attachmentUrl);
 
-  revalidatePath(`/sites/${access.event.siteSlug}/events/${access.event.id}/chat`);
+  revalidatePath("/chats", "layout");
 
   return { success: "messageRemoved" };
 }
@@ -135,7 +135,7 @@ export async function toggleMuteAction(
     });
   }
 
-  revalidatePath(`/sites/${access.event.siteSlug}/events/${eventId}/chat`);
+  revalidatePath("/chats", "layout");
 
   return { success: existing ? "participantUnmuted" : "participantMuted" };
 }
@@ -181,7 +181,7 @@ export async function editMessageAction(
     data: { body: parsed.data.body, editedAt: new Date() },
   });
 
-  revalidatePath(`/sites/${access.event.siteSlug}/events/${access.event.id}/chat`);
+  revalidatePath("/chats", "layout");
 
   return { success: "messageEdited" };
 }

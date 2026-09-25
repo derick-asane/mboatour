@@ -31,7 +31,8 @@
     "admin": "Admin",
     "account": "Your account",
     "guides": "Guides",
-    "guiding": "Guiding"
+    "guiding": "Guiding",
+    "chats": "Chats"
   },
   "Locales": {
     "en": "English",
@@ -592,7 +593,16 @@
     "yourChats": "Your chats",
     "closedShort": "Closed",
     "attach": "Attach a picture",
-    "removeAttachment": "Remove"
+    "removeAttachment": "Remove",
+    "inboxEyebrow": "Messages",
+    "inboxTitle": "Your chats",
+    "inboxPick": "Pick a conversation on the left to open it.",
+    "inboxEmptyTitle": "No conversations yet",
+    "inboxEmptyBody": "Book an event or arrange an outing with a guide, and the conversation will show up here.",
+    "inboxEmptyBrowse": "Find an event",
+    "inboxEmptyGuides": "Find a guide",
+    "roleGuide": "Your guide",
+    "roleTraveller": "Traveller"
   },
   "Booking": {
     "title": "Book this event",

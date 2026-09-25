@@ -31,7 +31,8 @@
     "admin": "Admin",
     "account": "Votre compte",
     "guides": "Guides",
-    "guiding": "Guidage"
+    "guiding": "Guidage",
+    "chats": "Messages"
   },
   "Locales": {
     "en": "English",
@@ -592,7 +593,16 @@
     "yourChats": "Vos discussions",
     "closedShort": "Fermée",
     "attach": "Joindre une image",
-    "removeAttachment": "Retirer"
+    "removeAttachment": "Retirer",
+    "inboxEyebrow": "Messages",
+    "inboxTitle": "Vos discussions",
+    "inboxPick": "Choisissez une conversation à gauche pour l’ouvrir.",
+    "inboxEmptyTitle": "Aucune conversation pour l’instant",
+    "inboxEmptyBody": "Réservez un événement ou organisez une sortie avec un guide, et la conversation apparaîtra ici.",
+    "inboxEmptyBrowse": "Trouver un événement",
+    "inboxEmptyGuides": "Trouver un guide",
+    "roleGuide": "Votre guide",
+    "roleTraveller": "Voyageur"
   },
   "Booking": {
     "title": "Réserver cet événement",

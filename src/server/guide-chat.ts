@@ -27,7 +27,12 @@ export type GuideChatAccess = {
   siteNames: string[];
 };
 
-function closesAt(booking: { startDate: Date; endDate: Date | null }): Date {
+/// Exported so the inbox can mark a conversation closed without re-deriving
+/// the grace period.
+export function guideChatClosesAt(booking: {
+  startDate: Date;
+  endDate: Date | null;
+}): Date {
   const ends = booking.endDate ?? booking.startDate;
 
   return new Date(ends.getTime() + CHAT_GRACE_DAYS * 24 * 60 * 60 * 1000);
@@ -76,7 +81,7 @@ export async function loadGuideChatAccess(
 
   const declined =
     booking.status === "DECLINED" || booking.status === "CANCELLED";
-  const closed = declined || Date.now() > closesAt(booking).getTime();
+  const closed = declined || Date.now() > guideChatClosesAt(booking).getTime();
 
   const traveller = booking.user.name ?? booking.user.email.split("@")[0];
   const guide =
