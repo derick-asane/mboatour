@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { Avatar } from "@/components/avatar";
 import { CoverImage } from "@/components/cover-image";
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -49,17 +50,17 @@ export function ConversationList({ rows }: { rows: ConversationRow[] }) {
                 {/* An event is a place, so it keeps its square cover; a person
                     gets a round portrait, which is also how the rest of the app
                     tells the two apart. */}
-                {row.kind === "guide" && !row.imageUrl ? (
-                  <span className="avatar h-10 w-10 shrink-0 text-sm">
-                    {row.title.trim().charAt(0) || "?"}
-                  </span>
+                {row.kind === "guide" ? (
+                  <Avatar
+                    name={row.title}
+                    imageUrl={row.imageUrl}
+                    className="h-10 w-10 shrink-0 text-sm"
+                  />
                 ) : (
                   <CoverImage
                     src={row.imageUrl}
                     alt=""
-                    className={`h-10 w-10 shrink-0 border border-line ${
-                      row.kind === "guide" ? "rounded-full" : "rounded-lg"
-                    }`}
+                    className="h-10 w-10 shrink-0 rounded-lg border border-line"
                   />
                 )}
 

@@ -57,12 +57,12 @@ export async function loadGuideChatAccess(
       amountCents: true,
       currency: true,
       userId: true,
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
       guide: {
         select: {
           userId: true,
           photoUrl: true,
-          user: { select: { name: true, email: true } },
+          user: { select: { name: true, email: true, image: true } },
         },
       },
       sites: { select: { site: { select: { name: true } } } },
@@ -99,7 +99,11 @@ export async function loadGuideChatAccess(
     },
     counterpart: {
       name: isGuide ? traveller : guide,
-      photoUrl: isGuide ? null : booking.guide.photoUrl,
+      // A guide's portrait when there is one; either way an account picture
+      // beats an initial.
+      photoUrl: isGuide
+        ? booking.user.image
+        : (booking.guide.photoUrl ?? booking.guide.user.image),
     },
     isGuide,
     closed,
@@ -114,6 +118,8 @@ export type GuideChatMessage = {
   createdAt: string;
   authorId: string;
   authorName: string;
+  /// The author's account picture, so a room shows faces rather than letters.
+  authorImage: string | null;
   removed: boolean;
   edited: boolean;
   attachmentUrl: string | null;
@@ -138,7 +144,7 @@ export async function listGuideMessages(
       editedAt: true,
       attachmentUrl: true,
       userId: true,
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
     },
   });
 
@@ -148,6 +154,7 @@ export async function listGuideMessages(
     createdAt: message.createdAt.toISOString(),
     authorId: message.userId,
     authorName: message.user.name ?? message.user.email.split("@")[0],
+    authorImage: message.user.image,
     removed: message.deletedAt !== null,
     edited: message.editedAt !== null,
     attachmentUrl: message.deletedAt ? null : message.attachmentUrl,

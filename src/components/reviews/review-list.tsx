@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 
+import { Avatar } from "@/components/avatar";
 import { ReviewControls } from "@/components/reviews/review-controls";
 import { Stars } from "@/components/reviews/stars";
 
@@ -10,6 +11,7 @@ export type ReviewRow = {
   createdAt: Date;
   editedAt: Date | null;
   authorName: string;
+  authorImage: string | null;
   isMine: boolean;
   hidden: boolean;
   reply: string | null;
@@ -44,9 +46,11 @@ export async function ReviewList({
           className={`card space-y-3 ${review.hidden ? "opacity-60" : ""}`}
         >
           <div className="flex flex-wrap items-start gap-3">
-            <span className="avatar shrink-0">
-              {review.authorName.trim().charAt(0) || "?"}
-            </span>
+            <Avatar
+              name={review.authorName}
+              imageUrl={review.authorImage}
+              className="shrink-0"
+            />
 
             <div className="min-w-0 flex-1 space-y-1">
               <p className="flex flex-wrap items-center gap-2 text-sm font-medium">

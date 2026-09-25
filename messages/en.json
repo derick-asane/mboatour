@@ -309,7 +309,8 @@
     "guidePaid": "Paid. The money goes straight to your guide.",
     "guideBookingCancelled": "Booking cancelled.",
     "complaintFiled": "Thank you. The team will look into it.",
-    "complaintDecided": "Complaint updated."
+    "complaintDecided": "Complaint updated.",
+    "pictureRemoved": "Picture removed."
   },
   "Errors": {
     "invalidInput": "Please check the highlighted fields.",
@@ -470,7 +471,11 @@
     "newPasswordHint": "At least 8 characters.",
     "savePassword": "Change password",
     "noPasswordYet": "This account signs in through a social provider. Set a password to also sign in with your email.",
-    "platformRoleNotice": "You hold platform authority: {role}."
+    "platformRoleNotice": "You hold platform authority: {role}.",
+    "picture": "Profile picture",
+    "pictureHint": "Shown beside your name in chats, reviews and anywhere else you appear. JPEG, PNG or WebP, up to 4 MB.",
+    "pictureTooLarge": "That picture is too large. Pick one under 4 MB.",
+    "removePicture": "Remove the picture"
   },
   "Map": {
     "title": "Where it is",

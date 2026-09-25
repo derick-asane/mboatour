@@ -2,6 +2,7 @@ import { getFormatter, getTranslations, setRequestLocale } from "next-intl/serve
 
 import { VisitDecision } from "@/app/[locale]/manage/[slug]/visits/visit-decision";
 import { EmptyState } from "@/components/empty-state";
+import { Avatar } from "@/components/avatar";
 import { SectionHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { prisma } from "@/lib/prisma";
@@ -23,7 +24,7 @@ export default async function ManageVisitsPage({
     where: { siteId: site.id },
     orderBy: [{ status: "asc" }, { visitDate: "asc" }],
     include: {
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
       reviewedBy: { select: { name: true, email: true } },
     },
   });
@@ -42,9 +43,11 @@ export default async function ManageVisitsPage({
             return (
               <li key={request.id} className="card space-y-4">
                 <div className="flex flex-wrap items-start gap-3">
-                  <span className="avatar" title={request.user.email}>
-                    {who.trim().charAt(0) || "?"}
-                  </span>
+                  <Avatar
+                    name={who}
+                    imageUrl={request.user.image}
+                    title={request.user.email}
+                  />
 
                   <div className="min-w-0 flex-1 space-y-1.5">
                     <p className="font-medium">{who}</p>

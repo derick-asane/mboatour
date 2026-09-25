@@ -2,6 +2,7 @@ import { getFormatter, getTranslations, setRequestLocale } from "next-intl/serve
 
 import { EndorsementDecision } from "@/app/[locale]/manage/[slug]/guides/endorsement-decision";
 import { EmptyState } from "@/components/empty-state";
+import { Avatar } from "@/components/avatar";
 import { SectionHeader } from "@/components/page-header";
 import { Link } from "@/i18n/navigation";
 import { isGuideLanguage } from "@/lib/guides";
@@ -35,7 +36,7 @@ export default async function ManageGuidesPage({
           photoUrl: true,
           status: true,
           city: true,
-          user: { select: { name: true, email: true } },
+          user: { select: { name: true, email: true, image: true } },
         },
       },
     },
@@ -56,18 +57,13 @@ export default async function ManageGuidesPage({
             return (
               <li key={endorsement.id} className="card space-y-4">
                 <div className="flex flex-wrap items-start gap-3">
-                  {endorsement.guide.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={endorsement.guide.photoUrl}
-                      alt=""
-                      className="media-placeholder h-14 w-14 shrink-0 rounded-full border border-line object-cover"
-                    />
-                  ) : (
-                    <span className="avatar h-14 w-14 text-base">
-                      {who.trim().charAt(0)}
-                    </span>
-                  )}
+                  <Avatar
+                    name={who}
+                    imageUrl={
+                      endorsement.guide.photoUrl ?? endorsement.guide.user.image
+                    }
+                    className="h-14 w-14 shrink-0 text-base"
+                  />
 
                   <div className="min-w-0 flex-1 space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">

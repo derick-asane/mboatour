@@ -4,6 +4,7 @@ import {
   AddAdminForm,
   AdminRoleForm,
 } from "@/app/[locale]/admin/admins/admin-clients";
+import { Avatar } from "@/components/avatar";
 import { SectionHeader } from "@/components/page-header";
 import { prisma } from "@/lib/prisma";
 import { requireSuperAdmin } from "@/server/session";
@@ -23,7 +24,13 @@ export default async function AdminAdminsPage({
   const admins = await prisma.user.findMany({
     where: { platformRole: { not: "MEMBER" } },
     orderBy: [{ platformRole: "asc" }, { email: "asc" }],
-    select: { id: true, name: true, email: true, platformRole: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      platformRole: true,
+    },
   });
 
   return (
@@ -42,9 +49,7 @@ export default async function AdminAdminsPage({
           return (
             <li key={admin.id} className="card space-y-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="avatar" title={admin.email}>
-                  {who.trim().charAt(0) || "?"}
-                </span>
+                <Avatar name={who} imageUrl={admin.image} title={admin.email} />
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{who}</p>

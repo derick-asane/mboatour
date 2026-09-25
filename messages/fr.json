@@ -309,7 +309,8 @@
     "guidePaid": "Payé. L’argent va directement à votre guide.",
     "guideBookingCancelled": "Réservation annulée.",
     "complaintFiled": "Merci. L’équipe va examiner la situation.",
-    "complaintDecided": "Signalement mis à jour."
+    "complaintDecided": "Signalement mis à jour.",
+    "pictureRemoved": "Photo supprimée."
   },
   "Errors": {
     "invalidInput": "Veuillez vérifier les champs signalés.",
@@ -470,7 +471,11 @@
     "newPasswordHint": "Au moins 8 caractères.",
     "savePassword": "Changer le mot de passe",
     "noPasswordYet": "Ce compte se connecte via un fournisseur social. Définissez un mot de passe pour vous connecter aussi par e-mail.",
-    "platformRoleNotice": "Vous détenez une autorité sur la plateforme : {role}."
+    "platformRoleNotice": "Vous détenez une autorité sur la plateforme : {role}.",
+    "picture": "Photo de profil",
+    "pictureHint": "Affichée à côté de votre nom dans les discussions, les avis et partout où vous apparaissez. JPEG, PNG ou WebP, jusqu’à 4 Mo.",
+    "pictureTooLarge": "Cette image est trop lourde. Choisissez-en une de moins de 4 Mo.",
+    "removePicture": "Supprimer la photo"
   },
   "Map": {
     "title": "Où se trouve le site",

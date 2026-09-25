@@ -4,6 +4,7 @@ import {
   AddMemberForm,
   MemberPermissionsForm,
 } from "@/app/[locale]/manage/[slug]/members/member-clients";
+import { Avatar } from "@/components/avatar";
 import { SectionHeader } from "@/components/page-header";
 import { prisma } from "@/lib/prisma";
 import { loadManagedSite } from "@/server/manage";
@@ -22,7 +23,7 @@ export default async function ManageMembersPage({
   const members = await prisma.siteMember.findMany({
     where: { siteId: site.id },
     orderBy: [{ role: "asc" }, { createdAt: "asc" }],
-    include: { user: { select: { name: true, email: true } } },
+    include: { user: { select: { name: true, email: true, image: true } } },
   });
 
   return (
@@ -41,9 +42,11 @@ export default async function ManageMembersPage({
           return (
             <li key={member.id} className="card space-y-4">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="avatar" title={member.user.email}>
-                  {who.trim().charAt(0) || "?"}
-                </span>
+                <Avatar
+                  name={who}
+                  imageUrl={member.user.image}
+                  title={member.user.email}
+                />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{who}</p>
                   <p className="truncate text-xs text-muted">

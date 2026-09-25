@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 
 import { CancelBookingButton, CancelVisitButton } from "@/app/[locale]/dashboard/cancel-buttons";
+import { Avatar } from "@/components/avatar";
 import { EmptyState } from "@/components/empty-state";
 import {
   CancelGuideBooking,
@@ -259,18 +260,11 @@ export default async function DashboardPage({
           <SectionHeader title={guideT("guidingTitle")} />
 
           <div className="card flex flex-wrap items-center gap-4">
-            {guideProfile.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={guideProfile.photoUrl}
-                alt=""
-                className="media-placeholder h-14 w-14 shrink-0 rounded-full border border-line object-cover"
-              />
-            ) : (
-              <span className="avatar h-14 w-14 text-base">
-                {(user.name ?? user.email).trim().charAt(0)}
-              </span>
-            )}
+            <Avatar
+              name={user.name ?? user.email}
+              imageUrl={guideProfile.photoUrl ?? user.image}
+              className="h-14 w-14 shrink-0 text-base"
+            />
 
             <div className="min-w-0 flex-1 space-y-1">
               <p className="flex flex-wrap items-center gap-2 font-medium">

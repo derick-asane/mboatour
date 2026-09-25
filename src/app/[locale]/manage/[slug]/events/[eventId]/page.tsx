@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { BookingDecision } from "@/app/[locale]/manage/[slug]/events/[eventId]/event-clients";
 import { EmptyState } from "@/components/empty-state";
+import { Avatar } from "@/components/avatar";
 import { SectionHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { Link } from "@/i18n/navigation";
@@ -36,7 +37,7 @@ export default async function ManageEventPage({
       bookings: {
         orderBy: { createdAt: "desc" },
         include: {
-          user: { select: { name: true, email: true } },
+          user: { select: { name: true, email: true, image: true } },
           payment: {
             select: {
               status: true,
@@ -108,9 +109,11 @@ export default async function ManageEventPage({
                 return (
                   <li key={booking.id} className="card space-y-4">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="avatar" title={booking.user.email}>
-                        {who.trim().charAt(0) || "?"}
-                      </span>
+                      <Avatar
+                        name={who}
+                        imageUrl={booking.user.image}
+                        title={booking.user.email}
+                      />
 
                       <div className="min-w-0 flex-1 space-y-1">
                         <p className="truncate font-medium">{who}</p>

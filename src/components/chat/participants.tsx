@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
+import { Avatar } from "@/components/avatar";
 import { FormMessage, SubmitButton } from "@/components/form";
 import { initialActionState } from "@/server/action-state";
 import { toggleMuteAction } from "@/server/actions/chat";
@@ -10,6 +11,7 @@ import { toggleMuteAction } from "@/server/actions/chat";
 type Participant = {
   id: string;
   name: string;
+  imageUrl: string | null;
   isTeam: boolean;
   muted: boolean;
 };
@@ -59,9 +61,11 @@ export function Participants({
       <ul className="space-y-2">
         {participants.map((participant) => (
           <li key={participant.id} className="flex items-center gap-2.5">
-            <span className="avatar shrink-0">
-              {participant.name.trim().charAt(0) || "?"}
-            </span>
+            <Avatar
+              name={participant.name}
+              imageUrl={participant.imageUrl}
+              className="shrink-0"
+            />
 
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{participant.name}</p>

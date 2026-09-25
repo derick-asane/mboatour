@@ -24,7 +24,7 @@ export default async function AccountPage({
 
   const record = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { name: true, email: true, passwordHash: true },
+    select: { name: true, email: true, image: true, passwordHash: true },
   });
 
   if (!record) return null;
@@ -51,7 +51,11 @@ export default async function AccountPage({
 
       <section className="space-y-4">
         <SectionHeader title={t("profileSection")} />
-        <ProfileForm name={record.name} email={record.email} />
+        <ProfileForm
+          name={record.name}
+          email={record.email}
+          imageUrl={record.image}
+        />
       </section>
 
       <section className="space-y-4">

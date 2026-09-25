@@ -95,7 +95,7 @@ export default async function SiteDetailPage({
         reply: true,
         repliedAt: true,
         userId: true,
-        user: { select: { name: true, email: true } },
+        user: { select: { name: true, email: true, image: true } },
       },
     }),
     canReviewSite(user?.id ?? null, site.id),
@@ -471,6 +471,7 @@ export default async function SiteDetailPage({
                 editedAt: review.editedAt,
                 authorName:
                   review.user.name ?? review.user.email.split("@")[0],
+                authorImage: review.user.image,
                 isMine: review.userId === user?.id,
                 hidden: review.hiddenAt !== null,
                 reply: review.reply,

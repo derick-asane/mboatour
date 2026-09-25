@@ -92,12 +92,12 @@ async function listGuideConversations(userId: string): Promise<Conversation[]> {
       startDate: true,
       endDate: true,
       userId: true,
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
       guide: {
         select: {
           userId: true,
           photoUrl: true,
-          user: { select: { name: true, email: true } },
+          user: { select: { name: true, email: true, image: true } },
         },
       },
       messages: {
@@ -131,9 +131,11 @@ async function listGuideConversations(userId: string): Promise<Conversation[]> {
           : displayName(booking.guide.user),
         subtitle: null,
         counterpart: isGuide ? ("traveller" as const) : ("guide" as const),
-        // Guides have a profile photo; travellers do not, so the guide's side
-        // of the list falls back to an initial.
-        imageUrl: isGuide ? null : booking.guide.photoUrl,
+        // A guide's portrait when there is one; either way an account picture
+        // beats an initial.
+        imageUrl: isGuide
+          ? booking.user.image
+          : (booking.guide.photoUrl ?? booking.guide.user.image),
         closed: settled || Date.now() > guideChatClosesAt(booking).getTime(),
         lastMessageAt: booking.messages[0]?.createdAt ?? null,
         scheduledAt: booking.startDate,

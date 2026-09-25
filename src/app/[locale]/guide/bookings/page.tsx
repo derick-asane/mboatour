@@ -5,6 +5,7 @@ import {
   CancelGuideBooking,
   RespondToRequest,
 } from "@/components/guides/guide-booking-controls";
+import { Avatar } from "@/components/avatar";
 import { PageHeader } from "@/components/page-header";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
@@ -58,7 +59,7 @@ export default async function GuideBookingsPage({
     where: { guideId: profile.id },
     orderBy: [{ status: "asc" }, { startDate: "asc" }],
     include: {
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
       sites: { include: { site: { select: { name: true, slug: true } } } },
       payment: { select: { status: true, amountCents: true, currency: true } },
     },
@@ -84,9 +85,11 @@ export default async function GuideBookingsPage({
           {bookings.map((booking) => (
             <li key={booking.id} className="card space-y-4">
               <div className="flex flex-wrap items-start gap-3">
-                <span className="avatar shrink-0">
-                  {(booking.user.name ?? booking.user.email).trim().charAt(0)}
-                </span>
+                <Avatar
+                  name={booking.user.name ?? booking.user.email}
+                  imageUrl={booking.user.image}
+                  className="shrink-0"
+                />
 
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">

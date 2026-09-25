@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { Avatar } from "@/components/avatar";
 import {
   editWindowOpen,
   MAX_MESSAGE_LENGTH,
@@ -19,6 +20,7 @@ type Message = {
   createdAt: string;
   authorId: string;
   authorName: string;
+  authorImage: string | null;
   removed: boolean;
   edited: boolean;
   attachmentUrl: string | null;
@@ -192,9 +194,11 @@ export function ChatRoom({
                 key={message.id}
                 className={`flex gap-2.5 ${mine ? "flex-row-reverse" : ""}`}
               >
-                <span className="avatar mt-0.5 shrink-0">
-                  {message.authorName.trim().charAt(0) || "?"}
-                </span>
+                <Avatar
+                  name={message.authorName}
+                  imageUrl={message.authorImage}
+                  className="mt-0.5 shrink-0"
+                />
 
                 <div className={`min-w-0 max-w-[80%] ${mine ? "text-right" : ""}`}>
                   <p className="text-xs text-muted">

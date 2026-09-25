@@ -14,6 +14,11 @@ import {
 } from "@/lib/oauth";
 import { prisma } from "@/lib/prisma";
 import {
+  deleteUploadedImage,
+  isUploadedFile,
+  saveUploadedImage,
+} from "@/lib/uploads";
+import {
   failure,
   fieldFailure,
   type ActionState,
@@ -183,10 +188,30 @@ export async function updateProfileAction(
     if (taken && taken.id !== user.id) return failure("emailTaken");
   }
 
-  await prisma.user.update({ where: { id: user.id }, data: { name, email } });
+  // A picture is optional: leaving the field alone keeps whatever is there.
+  const picture = formData.get("picture");
+  let image = user.image;
+
+  if (isUploadedFile(picture)) {
+    const saved = await saveUploadedImage(picture, "avatars");
+
+    if ("error" in saved) return failure(saved.error);
+
+    // The replaced file is of no use to anyone once nothing points at it. Only
+    // our own uploads are ours to delete: a picture from a sign-in provider
+    // lives on their server.
+    if (image) await deleteUploadedImage(image);
+
+    image = saved.url;
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { name, email, image },
+  });
 
   const locale = await getLocale();
-  revalidatePath(`/${locale}/account`);
+  revalidatePath(`/${locale}`, "layout");
 
   return { success: "profileUpdated" };
 }
@@ -297,4 +322,23 @@ export async function resetPasswordAction(
   await consumePasswordResetTokens(resolved.userId);
 
   return { success: "passwordUpdated" };
+}
+
+/// Drops the account picture, falling back to the initial everywhere.
+export async function removeAvatarAction(): Promise<ActionState> {
+  const user = await requireUser();
+
+  if (!user.image) return { success: "profileUpdated" };
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { image: null },
+  });
+
+  await deleteUploadedImage(user.image);
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}`, "layout");
+
+  return { success: "pictureRemoved" };
 }

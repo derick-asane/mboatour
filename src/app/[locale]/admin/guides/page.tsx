@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 
 import { GuideDecision } from "@/app/[locale]/admin/guides/guide-decision";
+import { Avatar } from "@/components/avatar";
 import { EmptyState } from "@/components/empty-state";
 import { SectionHeader } from "@/components/page-header";
 import { Link } from "@/i18n/navigation";
@@ -48,7 +49,7 @@ export default async function AdminGuidesPage({
     // Anything waiting on a decision first.
     orderBy: [{ status: "asc" }, { updatedAt: "desc" }],
     include: {
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
       // Only the ones a site actually granted: a request still waiting, or one
       // that was turned down, is not an endorsement and must not be counted as
       // one on a public card.
@@ -82,18 +83,11 @@ export default async function AdminGuidesPage({
           {guides.map((guide) => (
             <li key={guide.id} className="card space-y-4">
               <div className="flex flex-wrap items-start gap-3">
-                {guide.photoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={guide.photoUrl}
-                    alt=""
-                    className="media-placeholder h-14 w-14 shrink-0 rounded-full border border-line object-cover"
-                  />
-                ) : (
-                  <span className="avatar h-14 w-14 text-base">
-                    {(guide.user.name ?? guide.user.email).trim().charAt(0)}
-                  </span>
-                )}
+                <Avatar
+                  name={guide.user.name ?? guide.user.email}
+                  imageUrl={guide.photoUrl ?? guide.user.image}
+                  className="h-14 w-14 shrink-0 text-base"
+                />
 
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">

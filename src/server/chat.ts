@@ -115,6 +115,8 @@ export type ChatMessage = {
   createdAt: string;
   authorId: string;
   authorName: string;
+  /// The author's account picture, so a room shows faces rather than letters.
+  authorImage: string | null;
   /// Set when a moderator removed it; the body is replaced before sending.
   removed: boolean;
   edited: boolean;
@@ -140,7 +142,7 @@ export async function listMessages(eventId: string): Promise<ChatMessage[]> {
       editedAt: true,
       attachmentUrl: true,
       userId: true,
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, image: true } },
     },
   });
 
@@ -152,6 +154,7 @@ export async function listMessages(eventId: string): Promise<ChatMessage[]> {
     authorId: message.userId,
     // Display names only: an attendee's email is not the chat's business.
     authorName: message.user.name ?? message.user.email.split("@")[0],
+    authorImage: message.user.image,
     removed: message.deletedAt !== null,
     edited: message.editedAt !== null,
     // A removed message gives up its picture along with its words.

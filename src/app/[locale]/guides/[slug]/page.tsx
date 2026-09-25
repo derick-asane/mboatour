@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { Avatar } from "@/components/avatar";
 import { GuideReviewControls } from "@/components/guides/guide-review-controls";
 import { GuideReviewForm } from "@/components/guides/guide-review-form";
 import { RequestGuideDialog } from "@/components/guides/request-guide-dialog";
@@ -28,7 +29,7 @@ export default async function GuidePage({
   const guide = await prisma.guideProfile.findUnique({
     where: { slug },
     include: {
-      user: { select: { id: true, name: true } },
+      user: { select: { id: true, name: true, image: true } },
       endorsements: {
         where: { status: "APPROVED" },
         include: { site: { select: { name: true, slug: true } } },
@@ -86,7 +87,7 @@ export default async function GuidePage({
         reply: true,
         repliedAt: true,
         userId: true,
-        user: { select: { name: true, email: true } },
+        user: { select: { name: true, email: true, image: true } },
       },
     }),
     canReviewGuide(viewer?.id ?? null, { id: guide.id, userId: guide.userId }),
@@ -135,18 +136,11 @@ export default async function GuidePage({
       ) : null}
 
       <div className="flex flex-wrap items-center gap-4">
-        {guide.photoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={guide.photoUrl}
-            alt=""
-            className="media-placeholder h-24 w-24 shrink-0 rounded-full border border-line object-cover"
-          />
-        ) : (
-          <span className="avatar h-24 w-24 text-2xl">
-            {(guide.user.name ?? "?").trim().charAt(0)}
-          </span>
-        )}
+        <Avatar
+          name={guide.user.name}
+          imageUrl={guide.photoUrl ?? guide.user.image}
+          className="h-24 w-24 shrink-0 text-2xl"
+        />
 
         <div className="min-w-0 flex-1">
           <PageHeader
@@ -283,9 +277,11 @@ export default async function GuidePage({
                   className={`card space-y-3 ${review.hiddenAt ? "opacity-60" : ""}`}
                 >
                   <div className="flex flex-wrap items-start gap-3">
-                    <span className="avatar shrink-0">
-                      {author.trim().charAt(0) || "?"}
-                    </span>
+                    <Avatar
+                      name={author}
+                      imageUrl={review.user.image}
+                      className="shrink-0"
+                    />
 
                     <div className="min-w-0 flex-1 space-y-1">
                       <p className="flex flex-wrap items-center gap-2 text-sm font-medium">

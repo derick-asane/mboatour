@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { Avatar } from "@/components/avatar";
 import { BrandMark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { NavLink } from "@/components/nav-link";
@@ -22,8 +23,6 @@ export async function SiteHeader() {
         select: { id: true },
       })
     : null;
-
-  const initial = (user?.name ?? user?.email ?? "").trim().charAt(0) || "?";
 
   const links = (
     <>
@@ -63,8 +62,11 @@ export async function SiteHeader() {
               >
                 {t("createSite")}
               </Link>
-              <Link href="/account" className="avatar" title={t("account")}>
-                {initial}
+              <Link href="/account" title={t("account")}>
+                <Avatar
+                  name={user.name ?? user.email}
+                  imageUrl={user.image}
+                />
               </Link>
               <form action={signOutAction}>
                 <button type="submit" className="btn-ghost btn-sm">

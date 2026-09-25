@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { EmptyState } from "@/components/empty-state";
+import { Avatar } from "@/components/avatar";
 import { PageHeader } from "@/components/page-header";
 import { RatingSummary } from "@/components/reviews/stars";
 import { Link } from "@/i18n/navigation";
@@ -68,7 +69,7 @@ export default async function GuidesPage({
       currency: true,
       ratingAverage: true,
       ratingCount: true,
-      user: { select: { name: true } },
+      user: { select: { name: true, image: true } },
       // Only the ones a site actually granted: a request still waiting, or one
       // that was turned down, is not an endorsement and must not be counted as
       // one on a public card.
@@ -127,18 +128,11 @@ export default async function GuidesPage({
                 className="card card-interactive flex flex-col gap-3"
               >
                 <div className="flex items-center gap-3">
-                  {guide.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={guide.photoUrl}
-                      alt=""
-                      className="media-placeholder h-14 w-14 shrink-0 rounded-full border border-line object-cover"
-                    />
-                  ) : (
-                    <span className="avatar h-14 w-14 text-base">
-                      {(guide.user.name ?? "?").trim().charAt(0)}
-                    </span>
-                  )}
+                  <Avatar
+                    name={guide.user.name}
+                    imageUrl={guide.photoUrl ?? guide.user.image}
+                    className="h-14 w-14 shrink-0 text-base"
+                  />
 
                   <div className="min-w-0">
                     <p className="truncate font-semibold tracking-tight">

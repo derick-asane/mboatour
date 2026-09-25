@@ -35,11 +35,15 @@ export default async function EventConversationPage({
     listMessages(eventId),
     prisma.booking.findMany({
       where: { eventId, status: { not: "CANCELLED" } },
-      select: { user: { select: { id: true, name: true, email: true } } },
+      select: {
+        user: { select: { id: true, name: true, email: true, image: true } },
+      },
     }),
     prisma.siteMember.findMany({
       where: { siteId: access.event.siteId },
-      select: { user: { select: { id: true, name: true, email: true } } },
+      select: {
+        user: { select: { id: true, name: true, email: true, image: true } },
+      },
     }),
     prisma.eventChatMute.findMany({
       where: { eventId },
@@ -59,6 +63,7 @@ export default async function EventConversationPage({
     .map((user) => ({
       id: user.id,
       name: user.name ?? user.email.split("@")[0],
+      imageUrl: user.image,
       isTeam: teamIds.has(user.id),
       muted: mutedIds.has(user.id),
     }));

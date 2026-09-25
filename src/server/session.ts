@@ -11,6 +11,8 @@ export type SessionUser = {
   id: string;
   name: string | null;
   email: string;
+  /// The account picture, when one has been uploaded or came from a provider.
+  image: string | null;
   platformRole: PlatformRole;
 };
 
@@ -22,7 +24,13 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
   const user = await prisma.user.findUnique({
     where: { id },
-    select: { id: true, name: true, email: true, platformRole: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      platformRole: true,
+    },
   });
 
   return user;
