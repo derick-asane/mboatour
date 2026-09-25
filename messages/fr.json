@@ -435,7 +435,13 @@
     "MEMBER": "Membre",
     "ADMIN": "Administrateur",
     "SUPER_ADMIN": "Super administrateur",
-    "guides": "Guides"
+    "guides": "Guides",
+    "statsPending": "Sites en attente d’examen",
+    "statsVerified": "Sites vérifiés",
+    "statsSites": "Sites au total",
+    "statsPublished": "Sites publiés",
+    "statsAdmins": "Administrateurs",
+    "statsUsers": "Comptes"
   },
   "Account": {
     "title": "Votre compte",
@@ -797,6 +803,13 @@
     "guidingTitle": "Votre activité de guide",
     "yourGuideProfile": "Votre profil de guide",
     "editProfile": "Voir et modifier",
-    "requestsCount": "{count, plural, =0 {Aucune demande} =1 {# demande} other {# demandes}}"
+    "requestsCount": "{count, plural, =0 {Aucune demande} =1 {# demande} other {# demandes}}",
+    "backToRequests": "Retour à vos demandes"
+  },
+  "GuideChat": {
+    "withGuide": "Conversation avec votre guide",
+    "withTraveller": "Conversation avec votre voyageur",
+    "backToDashboard": "Retour au tableau de bord",
+    "closedNotice": "Cette conversation est fermée. Vous pouvez toujours la lire."
   }
 }
