@@ -23,6 +23,11 @@ export default async function AdminLayout({
     { key: "overview" as const, href: "/admin", label: t("overview") },
     { key: "sites" as const, href: "/admin/sites", label: t("sites") },
     { key: "guides" as const, href: "/admin/guides", label: t("guides") },
+    {
+      key: "complaints" as const,
+      href: "/admin/complaints",
+      label: t("complaints"),
+    },
     ...(canManageAdmins(admin.platformRole)
       ? [{ key: "admins" as const, href: "/admin/admins", label: t("admins") }]
       : []),

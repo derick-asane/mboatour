@@ -17,7 +17,7 @@ export default async function AdminOverviewPage({
 
   const t = await getTranslations("Admin");
 
-  const [pending, verified, totalSites, published, admins, users] =
+  const [pending, verified, totalSites, published, admins, users, complaints] =
     await Promise.all([
       prisma.touristicSite.count({ where: { verification: "PENDING" } }),
       prisma.touristicSite.count({ where: { verification: "VERIFIED" } }),
@@ -25,10 +25,14 @@ export default async function AdminOverviewPage({
       prisma.touristicSite.count({ where: { published: true } }),
       prisma.user.count({ where: { platformRole: { not: "MEMBER" } } }),
       prisma.user.count(),
+      // Anything nobody has closed yet, which is what someone arriving here
+      // needs to see first.
+      prisma.guideComplaint.count({ where: { status: { in: ["OPEN", "REVIEWING"] } } }),
     ]);
 
   const stats = [
     { label: t("statsPending"), value: pending, href: "/admin/sites?status=PENDING", alert: pending > 0 },
+    { label: t("statsComplaints"), value: complaints, href: "/admin/complaints", alert: complaints > 0 },
     { label: t("statsVerified"), value: verified, href: "/admin/sites?status=VERIFIED", alert: false },
     { label: t("statsSites"), value: totalSites, href: "/admin/sites", alert: false },
     { label: t("statsPublished"), value: published, href: "/admin/sites", alert: false },

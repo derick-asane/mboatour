@@ -6,6 +6,7 @@ import {
   CancelGuideBooking,
   PayGuide,
 } from "@/components/guides/guide-booking-controls";
+import { ReportGuideDialog } from "@/components/guides/report-guide-dialog";
 import { SectionHeader, PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { Link } from "@/i18n/navigation";
@@ -82,10 +83,11 @@ export default async function DashboardPage({
       include: {
         guide: {
           select: {
+            id: true,
             slug: true,
             phone: true,
             whatsapp: true,
-            user: { select: { name: true } },
+            user: { select: { name: true, email: true } },
           },
         },
         sites: { include: { site: { select: { name: true, slug: true } } } },
@@ -404,6 +406,16 @@ export default async function DashboardPage({
 
                 {booking.status === "PENDING" || booking.status === "ACCEPTED" ? (
                   <CancelGuideBooking bookingId={booking.id} />
+                ) : null}
+
+                {booking.status !== "PENDING" ? (
+                  <ReportGuideDialog
+                    guideId={booking.guide.id}
+                    guideName={
+                      booking.guide.user.name ?? booking.guide.user.email
+                    }
+                    bookingId={booking.id}
+                  />
                 ) : null}
               </li>
             ))}

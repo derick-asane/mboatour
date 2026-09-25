@@ -144,6 +144,8 @@ model User {
   moderatedMessages    EventMessage[]  @relation("MessageModerator")
   chatMutes            EventChatMute[] @relation("MutedParticipant")
   mutesIssued          EventChatMute[] @relation("MuteModerator")
+  complaints           GuideComplaint[] @relation("ComplaintAuthor")
+  reviewedComplaints   GuideComplaint[] @relation("ComplaintReviewer")
 }
 
 model Account {
@@ -511,6 +513,7 @@ model GuideProfile {
   verifiedBy   User?              @relation("GuideVerifier", fields: [verifiedById], references: [id])
   endorsements GuideEndorsement[]
   reviews      GuideReview[]
+  complaints   GuideComplaint[]
 
   /// Kept beside the reviews so the directory needs no aggregate query.
   ratingAverage Float?
@@ -563,9 +566,10 @@ model GuideBooking {
 
   guide   GuideProfile       @relation(fields: [guideId], references: [id], onDelete: Cascade)
   user    User               @relation("GuideBookingTraveller", fields: [userId], references: [id], onDelete: Cascade)
-  sites    GuideBookingSite[]
-  payment  Payment?
-  messages GuideMessage[]
+  sites      GuideBookingSite[]
+  payment    Payment?
+  messages   GuideMessage[]
+  complaints GuideComplaint[]
 
   @@index([guideId, status])
   @@index([userId])
@@ -631,4 +635,62 @@ model GuideMessage {
   deletedBy    User?        @relation("GuideMessageRemover", fields: [deletedById], references: [id])
 
   @@index([guideBookingId, createdAt])
+}
+
+/// Why a complaint is not a review: a review is public and about how good the
+/// outing was, and the guide may answer it. A complaint is private to the
+/// platform team and about conduct — safety, money, being left waiting — which
+/// is a matter for someone with authority, not for a star rating. Only the
+/// platform reads one, and only the platform acts on it.
+model GuideComplaint {
+  id        String          @id @default(cuid())
+  guideId   String
+  userId    String
+  /// The outing it concerns, which is usually also the proof the two ever met.
+  /// Kept nullable so losing the booking never destroys the complaint about it.
+  bookingId String?
+  reason    ComplaintReason
+  body      String
+  status    ComplaintStatus @default(OPEN)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  /// What the platform concluded. Held apart from `status` so a closed
+  /// complaint still records what was actually done about it.
+  outcome      ComplaintOutcome?
+  resolution   String?
+  reviewedAt   DateTime?
+  reviewedById String?
+
+  guide      GuideProfile  @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  user       User          @relation("ComplaintAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  booking    GuideBooking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  reviewedBy User?         @relation("ComplaintReviewer", fields: [reviewedById], references: [id])
+
+  @@index([status, createdAt])
+  @@index([guideId])
+  @@index([userId])
+}
+
+enum ComplaintReason {
+  CONDUCT
+  SAFETY
+  MONEY
+  NO_SHOW
+  OTHER
+}
+
+enum ComplaintStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+/// Recorded even when the answer is that nothing was wrong, so a guide cleared
+/// of something is on record as cleared rather than merely unpunished.
+enum ComplaintOutcome {
+  NO_ACTION
+  WARNED
+  SUSPENDED
 }

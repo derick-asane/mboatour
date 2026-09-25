@@ -409,3 +409,97 @@ async function siteTeam(
 
   return members.map((member) => member.user);
 }
+
+type ComplaintContext = {
+  complaintId: string;
+  reason: string;
+  body: string;
+  guideName: string;
+  travellerName: string;
+};
+
+/// The platform team, because a complaint sitting unread is the same as no
+/// complaint at all. Written to each admin in their own language.
+export async function sendComplaintFiledEmails(
+  admins: Recipient[],
+  context: ComplaintContext,
+): Promise<void> {
+  for (const admin of admins) {
+    await safely(
+      deliver(admin, (t) => ({
+        subject: t("complaintFiledSubject", { name: context.guideName }),
+        title: t("complaintFiledTitle"),
+        paragraphs: [
+          t("complaintFiledBody", {
+            traveller: context.travellerName,
+            guide: context.guideName,
+          }),
+          context.body,
+        ],
+        facts: [
+          { label: t("factReason"), value: t(`reason${context.reason}`) },
+          { label: t("factGuide"), value: context.guideName },
+        ],
+        action: {
+          label: t("complaintReviewCta"),
+          url: appUrl(`/${localeFor(admin.locale)}/admin/complaints`),
+        },
+      })),
+    );
+  }
+}
+
+/// Both sides hear the outcome, but the guide is never told who reported them:
+/// a traveller who speaks up about someone they may still have to travel with
+/// should not be handed over for it.
+export async function sendComplaintDecisionEmails(
+  guide: Recipient,
+  complainant: Recipient,
+  decision: {
+    outcome: "NO_ACTION" | "WARNED" | "SUSPENDED";
+    resolution: string | null;
+    dismissed: boolean;
+  },
+): Promise<void> {
+  if (!decision.dismissed && decision.outcome !== "NO_ACTION") {
+    await safely(
+      deliver(guide, (t) => ({
+        subject:
+          decision.outcome === "SUSPENDED"
+            ? t("complaintSuspendedSubject")
+            : t("complaintWarnedSubject"),
+        title:
+          decision.outcome === "SUSPENDED"
+            ? t("complaintSuspendedTitle")
+            : t("complaintWarnedTitle"),
+        paragraphs: [
+          decision.outcome === "SUSPENDED"
+            ? t("complaintSuspendedBody")
+            : t("complaintWarnedBody"),
+          ...(decision.resolution ? [decision.resolution] : []),
+        ],
+        action: {
+          label: t("complaintGuideCta"),
+          url: appUrl(`/${localeFor(guide.locale)}/guide`),
+        },
+      })),
+    );
+  }
+
+  await safely(
+    deliver(complainant, (t) => ({
+      subject: t("complaintClosedSubject"),
+      title: t("complaintClosedTitle"),
+      paragraphs: [
+        decision.dismissed
+          ? t("complaintDismissedBody")
+          : t(`complaintOutcome${decision.outcome}Body`),
+        ...(decision.resolution ? [decision.resolution] : []),
+      ],
+      action: {
+        label: t("complaintTravellerCta"),
+        url: appUrl(`/${localeFor(complainant.locale)}/dashboard`),
+      },
+    })),
+  );
+}
