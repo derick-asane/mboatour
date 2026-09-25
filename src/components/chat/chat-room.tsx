@@ -10,11 +10,7 @@ import {
   MESSAGE_EDIT_WINDOW_MINUTES,
 } from "@/lib/chat-limits";
 import { ACCEPTED_IMAGE_TYPES } from "@/lib/upload-limits";
-import {
-  deleteMessageAction,
-  editMessageAction,
-  postMessageAction,
-} from "@/server/actions/chat";
+import type { ActionState } from "@/server/action-state";
 import { initialActionState } from "@/server/action-state";
 
 type Message = {
@@ -43,22 +39,40 @@ function SendButton({ label }: { label: string }) {
   );
 }
 
+type ChatAction = (
+  previous: ActionState,
+  formData: FormData,
+) => Promise<ActionState>;
+
 export function ChatRoom({
-  eventId,
+  endpoint,
+  hiddenFields,
+  postAction,
+  deleteAction,
+  editAction,
   currentUserId,
-  isTeam,
+  canModerate = false,
   initialMessages,
   canPost,
   closed,
-  muted,
+  muted = false,
 }: {
-  eventId: string;
+  /// Returns the recent window as JSON; the same access rules are re-checked
+  /// there on every poll.
+  endpoint: string;
+  /// Sent with every message, naming what the conversation belongs to.
+  hiddenFields: Record<string, string>;
+  postAction: ChatAction;
+  deleteAction: ChatAction;
+  editAction: ChatAction;
   currentUserId: string;
-  isTeam: boolean;
+  /// Someone who may remove other people's messages. False in a conversation of
+  /// two, where there is nobody to moderate on behalf of.
+  canModerate?: boolean;
   initialMessages: Message[];
   canPost: boolean;
   closed: boolean;
-  muted: boolean;
+  muted?: boolean;
 }) {
   const t = useTranslations("Chat");
   const format = useFormatter();
@@ -79,9 +93,7 @@ export function ChatRoom({
   /// while the tab is hidden, so a forgotten tab costs nothing.
   const refresh = useCallback(async () => {
     try {
-      const response = await fetch(`/api/events/${eventId}/messages`, {
-        cache: "no-store",
-      });
+      const response = await fetch(endpoint, { cache: "no-store" });
 
       if (!response.ok) return;
 
@@ -90,7 +102,7 @@ export function ChatRoom({
     } catch {
       // A dropped poll is not worth showing: the next one is seconds away.
     }
-  }, [eventId]);
+  }, [endpoint]);
 
   useEffect(() => {
     const clock = setInterval(() => setNow(Date.now()), 30_000);
@@ -122,7 +134,7 @@ export function ChatRoom({
 
   async function submit(formData: FormData) {
     setError(null);
-    const result = await postMessageAction(initialActionState, formData);
+    const result = await postAction(initialActionState, formData);
 
     if (result.error) {
       setError(result.error);
@@ -138,7 +150,7 @@ export function ChatRoom({
   /// The form element wants a void-returning action, and the removal should
   /// show up straight away rather than at the next poll.
   async function remove(formData: FormData) {
-    const result = await deleteMessageAction(initialActionState, formData);
+    const result = await deleteAction(initialActionState, formData);
 
     if (result.error) setError(result.error);
 
@@ -147,7 +159,7 @@ export function ChatRoom({
 
   async function saveEdit(formData: FormData) {
     setError(null);
-    const result = await editMessageAction(initialActionState, formData);
+    const result = await editAction(initialActionState, formData);
 
     if (result.error) {
       setError(result.error);
@@ -271,7 +283,7 @@ export function ChatRoom({
                         </button>
                       ) : null}
 
-                      {mine || isTeam ? (
+                      {mine || canModerate ? (
                         <form action={remove}>
                           <input type="hidden" name="messageId" value={message.id} />
                           <button
@@ -299,7 +311,9 @@ export function ChatRoom({
 
       {canPost ? (
         <form ref={formRef} action={submit} className="space-y-2">
-          <input type="hidden" name="eventId" value={eventId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
 
           {picture ? (
             <p className="flex items-center gap-2 text-xs text-muted">

@@ -30,6 +30,7 @@ export default async function GuideBookingsPage({
 
   const user = await requireUser("/guide/bookings");
   const t = await getTranslations("GuideBooking");
+  const chatT = await getTranslations("Chat");
   const format = await getFormatter();
 
   const profile = await prisma.guideProfile.findUnique({
@@ -136,6 +137,15 @@ export default async function GuideBookingsPage({
                   ) : null}
                 </div>
               </div>
+
+              {booking.status === "ACCEPTED" || booking.status === "COMPLETED" ? (
+                <Link
+                  href={`/guide-bookings/${booking.id}/chat`}
+                  className="btn-secondary btn-sm"
+                >
+                  {chatT("openChat")}
+                </Link>
+              ) : null}
 
               {booking.status === "PENDING" ? (
                 <RespondToRequest bookingId={booking.id} />

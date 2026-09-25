@@ -4,6 +4,11 @@ import { notFound } from "next/navigation";
 import { Participants } from "@/app/[locale]/sites/[slug]/events/[eventId]/chat/participants";
 import { ChatList } from "@/components/chat/chat-list";
 import { ChatRoom } from "@/components/chat/chat-room";
+import {
+  deleteMessageAction,
+  editMessageAction,
+  postMessageAction,
+} from "@/server/actions/chat";
 import { CoverImage } from "@/components/cover-image";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
@@ -111,9 +116,13 @@ export default async function EventChatPage({
 
         <div className="h-[32rem] lg:h-[36rem]">
           <ChatRoom
-            eventId={eventId}
+            endpoint={`/api/events/${eventId}/messages`}
+            hiddenFields={{ eventId }}
+            postAction={postMessageAction}
+            deleteAction={deleteMessageAction}
+            editAction={editMessageAction}
             currentUserId={access.user.id}
-            isTeam={access.isTeam}
+            canModerate={access.isTeam}
             initialMessages={messages}
             canPost={access.canPost}
             closed={access.closed}

@@ -393,6 +393,15 @@ export default async function DashboardPage({
                   />
                 ) : null}
 
+                {booking.status === "ACCEPTED" || booking.status === "COMPLETED" ? (
+                  <Link
+                    href={`/guide-bookings/${booking.id}/chat`}
+                    className="btn-secondary btn-sm"
+                  >
+                    {chat("openChat")}
+                  </Link>
+                ) : null}
+
                 {booking.status === "PENDING" || booking.status === "ACCEPTED" ? (
                   <CancelGuideBooking bookingId={booking.id} />
                 ) : null}

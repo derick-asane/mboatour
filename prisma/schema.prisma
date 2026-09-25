@@ -138,6 +138,8 @@ model User {
   hiddenReviews        Review[]        @relation("ReviewModerator")
   reviewReplies        Review[]        @relation("ReviewResponder")
   verifiedSites        TouristicSite[] @relation("SiteVerifier")
+  guideMessages        GuideMessage[]  @relation("GuideMessageAuthor")
+  removedGuideMessages GuideMessage[]  @relation("GuideMessageRemover")
   eventMessages        EventMessage[]  @relation("MessageAuthor")
   moderatedMessages    EventMessage[]  @relation("MessageModerator")
   chatMutes            EventChatMute[] @relation("MutedParticipant")
@@ -561,8 +563,9 @@ model GuideBooking {
 
   guide   GuideProfile       @relation(fields: [guideId], references: [id], onDelete: Cascade)
   user    User               @relation("GuideBookingTraveller", fields: [userId], references: [id], onDelete: Cascade)
-  sites   GuideBookingSite[]
-  payment Payment?
+  sites    GuideBookingSite[]
+  payment  Payment?
+  messages GuideMessage[]
 
   @@index([guideId, status])
   @@index([userId])
@@ -607,4 +610,25 @@ model GuideReview {
 
   @@unique([guideId, userId])
   @@index([guideId, createdAt])
+}
+
+/// The conversation between a traveller and their guide. It opens when the
+/// guide accepts, because there is nothing to arrange before that, and it is
+/// only ever these two people: a private arrangement, not a group.
+model GuideMessage {
+  id             String    @id @default(cuid())
+  guideBookingId String
+  userId         String
+  body           String
+  attachmentUrl  String?
+  createdAt      DateTime  @default(now())
+  editedAt       DateTime?
+  deletedAt      DateTime?
+  deletedById    String?
+
+  guideBooking GuideBooking @relation(fields: [guideBookingId], references: [id], onDelete: Cascade)
+  user         User         @relation("GuideMessageAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  deletedBy    User?        @relation("GuideMessageRemover", fields: [deletedById], references: [id])
+
+  @@index([guideBookingId, createdAt])
 }
