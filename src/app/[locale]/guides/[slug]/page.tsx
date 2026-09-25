@@ -98,6 +98,21 @@ export default async function GuidePage({
 
   const isGuideOwner = viewer?.id === guide.userId;
 
+  // What the reader has open with this guide already, so the page offers the
+  // next step rather than the same one again.
+  const openRequest =
+    viewer && !isGuideOwner
+      ? await prisma.guideBooking.findFirst({
+          where: {
+            guideId: guide.id,
+            userId: viewer.id,
+            status: { in: ["PENDING", "ACCEPTED"] },
+          },
+          orderBy: { createdAt: "desc" },
+          select: { id: true, status: true },
+        })
+      : null;
+
   const rates = [
     guide.hourlyRateCents !== null
       ? {
@@ -190,7 +205,18 @@ export default async function GuidePage({
               ))}
             </dl>
           )}
-          {guide.status === "VERIFIED" && viewer?.id !== guide.userId ? (
+          {openRequest ? (
+            <div className="space-y-2">
+              <p className="alert">
+                {openRequest.status === "ACCEPTED"
+                  ? t("requestAccepted")
+                  : t("requestPending")}
+              </p>
+              <Link href="/dashboard" className="btn-secondary btn-sm">
+                {t("seeYourRequest")}
+              </Link>
+            </div>
+          ) : guide.status === "VERIFIED" && viewer?.id !== guide.userId ? (
             <RequestGuideDialog
               guideId={guide.id}
               guideName={guide.user.name ?? t("guide")}

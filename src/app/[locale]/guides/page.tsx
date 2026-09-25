@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
 import { GUIDE_LANGUAGES, isGuideLanguage } from "@/lib/guides";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/server/session";
 
 /// The public directory. Only profiles the platform has checked appear here.
 export default async function GuidesPage({
@@ -24,6 +25,16 @@ export default async function GuidesPage({
   const languages = await getTranslations("Languages");
   const common = await getTranslations("Common");
   const reviews = await getTranslations("Reviews");
+
+  // Someone who already guides is not being invited to start; they want the
+  // way back to their own profile.
+  const viewer = await getCurrentUser();
+  const myProfile = viewer
+    ? await prisma.guideProfile.findUnique({
+        where: { userId: viewer.id },
+        select: { id: true },
+      })
+    : null;
 
   const query = q?.trim();
   const filter = language && isGuideLanguage(language) ? language : null;
@@ -70,7 +81,7 @@ export default async function GuidesPage({
         description={t("directorySubtitle")}
         actions={
           <Link href="/guide" className="btn-secondary">
-            {t("becomeAGuide")}
+            {myProfile ? t("yourProfile") : t("becomeAGuide")}
           </Link>
         }
       />

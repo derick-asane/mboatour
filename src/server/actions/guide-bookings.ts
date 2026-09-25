@@ -121,6 +121,19 @@ export async function requestGuideAction(
   if (!guide || guide.status !== "VERIFIED") return failure("guideNotAvailable");
   if (guide.userId === user.id) return failure("cannotBookYourself");
 
+  // One open request per guide at a time. Without this a guide can be sent the
+  // same request repeatedly, and the traveller cannot tell which one counts.
+  const openRequest = await prisma.guideBooking.findFirst({
+    where: {
+      guideId: guide.id,
+      userId: user.id,
+      status: { in: ["PENDING", "ACCEPTED"] },
+    },
+    select: { id: true },
+  });
+
+  if (openRequest) return failure("alreadyRequested");
+
   const siteIds = formData
     .getAll("siteIds")
     .map((value) => String(value))

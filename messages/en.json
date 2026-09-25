@@ -364,7 +364,8 @@
     "nothingToPay": "There is nothing to pay on this booking.",
     "guideHasNoNumber": "This guide has no payment number on their profile yet.",
     "guideNotBeenYet": "You can only rate a guide after an outing you paid for.",
-    "ownSite": "This is your own site."
+    "ownSite": "This is your own site.",
+    "alreadyRequested": "You already have an open request with this guide. Wait for their answer, or cancel it first."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -731,7 +732,11 @@
     "rateThisGuide": "Rate this guide",
     "reviewPlaceholder": "How was the day? What should the next traveller know?",
     "guideNotBeenYetHint": "You can rate a guide once an outing you paid for is over.",
-    "replyFromGuide": "Reply from the guide"
+    "replyFromGuide": "Reply from the guide",
+    "yourProfile": "Your guide profile",
+    "requestPending": "You have a request with this guide, waiting for their answer.",
+    "requestAccepted": "This guide accepted your request.",
+    "seeYourRequest": "See your request"
   },
   "Languages": {
     "EN": "English",
