@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ResetForm } from "@/app/[locale]/reset/reset-form";
-import { BrandMark } from "@/components/brand";
+import { BrandLogo } from "@/components/brand";
 import { Link } from "@/i18n/navigation";
 import { resolvePasswordResetToken } from "@/server/password-reset";
 
@@ -26,7 +26,7 @@ export default async function ResetPasswordPage({
     <div className="mx-auto w-full max-w-md space-y-6 py-4 sm:py-8">
       <div className="space-y-3 text-center">
         <div className="flex justify-center">
-          <BrandMark className="h-11 w-11" />
+          <BrandLogo className="h-12" />
         </div>
         <h1 className="page-title text-2xl">{t("resetTitle")}</h1>
         <p className="lede text-sm">{t("resetSubtitle")}</p>

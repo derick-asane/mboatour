@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { Avatar } from "@/components/avatar";
-import { BrandMark } from "@/components/brand";
+import { BrandLogo } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { NavLink } from "@/components/nav-link";
 import { isPlatformAdmin } from "@/lib/platform";
@@ -43,12 +43,8 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/85 backdrop-blur-md">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-2 px-4 sm:px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 rounded-lg pr-1 text-[0.9375rem] font-semibold tracking-tight"
-        >
-          <BrandMark className="h-7 w-7" />
-          {common("appName")}
+        <Link href="/" className="flex items-center rounded-lg pr-1" aria-label={common("appName")}>
+          <BrandLogo className="h-7 sm:h-8" priority />
         </Link>
 
         <nav className="ml-3 hidden items-center gap-1 sm:flex">{links}</nav>

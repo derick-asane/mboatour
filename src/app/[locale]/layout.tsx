@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 
-import { BrandMark } from "@/components/brand";
+import { BrandLogo } from "@/components/brand";
 import { SiteHeader } from "@/components/site-header";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -61,13 +61,8 @@ export default async function LocaleLayout({
           <footer className="mt-8 border-t border-line bg-surface">
             <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-8 sm:px-6">
               <div className="flex items-center gap-3">
-                <BrandMark className="h-8 w-8" />
-                <div>
-                  <p className="text-sm font-semibold tracking-tight">
-                    {common("appName")}
-                  </p>
-                  <p className="text-xs text-muted">{common("tagline")}</p>
-                </div>
+                <BrandLogo className="h-9" />
+                <p className="text-xs text-muted">{common("tagline")}</p>
               </div>
 
               <nav className="flex items-center gap-1">

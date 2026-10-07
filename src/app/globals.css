@@ -601,6 +601,16 @@ input[type="radio"] {
 
   /* Misc ----------------------------------------------------------------- */
 
+/* The logo carries its own white background, so it gets a small plate to sit
+     on. On the light surface this is invisible; on the dark one it keeps the
+     artwork from being a hard-edged white rectangle. */
+  .brand-plate {
+    border-radius: 0.5rem;
+    background: #ffffff;
+    padding: 0.2rem 0.35rem;
+    line-height: 0;
+  }
+
   .avatar {
     display: inline-flex;
     align-items: center;

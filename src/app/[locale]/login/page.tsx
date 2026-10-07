@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { LoginForm } from "@/app/[locale]/login/login-form";
-import { BrandMark } from "@/components/brand";
+import { BrandLogo } from "@/components/brand";
 import { OAuthButtons } from "@/components/oauth-buttons";
 import { Link } from "@/i18n/navigation";
 import {
@@ -35,7 +35,7 @@ export default async function LoginPage({
     <div className="mx-auto w-full max-w-md space-y-6 py-4 sm:py-8">
       <div className="space-y-3 text-center">
         <div className="flex justify-center">
-          <BrandMark className="h-11 w-11" />
+          <BrandLogo className="h-12" />
         </div>
         <h1 className="page-title text-2xl">{t("signInTitle")}</h1>
         <p className="lede text-sm">{t("signInSubtitle")}</p>
