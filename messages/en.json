@@ -32,7 +32,8 @@
     "account": "Your account",
     "guides": "Guides",
     "guiding": "Guiding",
-    "chats": "Chats"
+    "chats": "Chats",
+    "services": "Services"
   },
   "Locales": {
     "en": "English",
@@ -113,7 +114,15 @@
     "groupVisiting": "Visiting and publication",
     "categoryPlaceholder": "Select a category",
     "groupPhotos": "Photos",
-    "groupPhotosHint": "The cover appears on cards and at the top of the site page."
+    "groupPhotosHint": "The cover appears on cards and at the top of the site page.",
+    "kind": "What is this?",
+    "kindHint": "Pick the one that fits best. It decides how travellers find you.",
+    "groupContact": "Getting in touch",
+    "groupContactHint": "How a traveller reaches you. At least one of these is worth filling in.",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "website": "Website",
+    "createService": "List the service"
   },
   "Site": {
     "about": "About",
@@ -905,5 +914,36 @@
     "priorCount": "{count, plural, =1 {# complaint} other {# complaints in total}}",
     "guideSuspended": "Already suspended",
     "decidedBy": "Closed by {name} on {date}"
+  },
+  "PlaceKinds": {
+    "SITE": "Touristic site",
+    "HOTEL": "Hotel",
+    "RESTAURANT": "Restaurant",
+    "TRANSPORT": "Transport",
+    "TOUR_OPERATOR": "Tour operator",
+    "SHOP": "Shop",
+    "OTHER": "Other service"
+  },
+  "Services": {
+    "title": "Services",
+    "subtitle": "Places to sleep, places to eat, and ways to get around — each one checked by the Mboatour team.",
+    "create": "List a service",
+    "createTitle": "List a service",
+    "createSubtitle": "Tell us about your hotel, restaurant or other service. It appears to travellers once the Mboatour team has verified it.",
+    "searchPlaceholder": "Search by name or town",
+    "allKinds": "All",
+    "empty": "Nothing listed yet",
+    "emptyHint": "No verified service matches. If you run one, list it and the team will review it.",
+    "fromPrice": "From {price}",
+    "about": "About",
+    "practical": "Practical",
+    "priceFrom": "From",
+    "address": "Address",
+    "contact": "Get in touch",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "website": "Website",
+    "viewOnMap": "See it on the map",
+    "manage": "Manage this service"
   }
 }

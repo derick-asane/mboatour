@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/page-header";
 import { SiteCard } from "@/components/site-card";
 import { Link } from "@/i18n/navigation";
 import { openEventWhere } from "@/lib/events";
-import { publicSiteWhere } from "@/lib/sites";
+import { publicTouristicSiteWhere } from "@/lib/sites";
 import { prisma } from "@/lib/prisma";
 
 export default async function SitesPage({
@@ -26,7 +26,7 @@ export default async function SitesPage({
 
   const sites = await prisma.touristicSite.findMany({
     where: {
-      ...publicSiteWhere(),
+      ...publicTouristicSiteWhere(),
       ...(query
         ? {
             OR: [

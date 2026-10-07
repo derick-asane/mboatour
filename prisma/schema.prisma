@@ -21,6 +21,20 @@ enum PlatformRole {
   SUPER_ADMIN
 }
 
+/// What a listing is. Sites are the places people come to see; the rest are
+/// services somebody runs for them. They share one table because they share
+/// everything that matters here: a team, photos, a position, reviews, and a
+/// badge the platform grants.
+enum PlaceKind {
+  SITE
+  HOTEL
+  RESTAURANT
+  TRANSPORT
+  TOUR_OPERATOR
+  SHOP
+  OTHER
+}
+
 enum SiteVerificationStatus {
   UNVERIFIED
   PENDING
@@ -193,6 +207,9 @@ model VerificationToken {
 
 model TouristicSite {
   id            String   @id @default(cuid())
+  /// What this place is. SITE is a touristic site; everything else is a
+  /// service somebody runs, listed under its own tab.
+  kind          PlaceKind @default(SITE)
   name          String
   slug          String   @unique
   summary       String?
@@ -205,6 +222,9 @@ model TouristicSite {
   longitude     Float?
   coverImageUrl String?
   openingHours  String?
+  phone         String?
+  whatsapp      String?
+  website       String?
   entryFeeCents Int      @default(0)
   currency      String   @default("XAF")
   published     Boolean  @default(false)
@@ -233,6 +253,8 @@ model TouristicSite {
   @@index([published])
   @@index([verification])
   @@index([createdById])
+  /// Every public listing asks for a kind plus both visibility flags.
+  @@index([kind, published, verification])
 }
 
 /// A user's admin seat on a site. The creator gets OWNER with every permission;

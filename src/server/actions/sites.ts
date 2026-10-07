@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { isSiteCategory } from "@/lib/categories";
+import { isPlaceKind } from "@/lib/places";
 import { prisma } from "@/lib/prisma";
 import { ALL_PERMISSIONS } from "@/lib/permissions";
 import { uniqueSlug } from "@/lib/slug";
@@ -39,6 +40,15 @@ const siteSchema = z.object({
   city: z.string().trim().max(80).optional().transform((v) => v || null),
   country: z.string().trim().max(80).optional().transform((v) => v || null),
   openingHours: z.string().trim().max(200).optional().transform((v) => v || null),
+  phone: z.string().trim().max(40).optional().transform((v) => v || null),
+  whatsapp: z.string().trim().max(40).optional().transform((v) => v || null),
+  website: z.string().trim().max(200).optional().transform((v) => v || null),
+  // Anything that is not one of ours is a site, which is the safe default: a
+  // listing can only become a service by saying so.
+  kind: z
+    .string()
+    .optional()
+    .transform((v) => (isPlaceKind(v) ? v : "SITE")),
   // Both coordinates travel together: half a position is not a position.
   latitude: z
     .union([z.coerce.number().min(-90).max(90), z.literal("")])
@@ -63,6 +73,10 @@ function readSiteForm(formData: FormData) {
     city: formData.get("city") ?? undefined,
     country: formData.get("country") ?? undefined,
     openingHours: formData.get("openingHours") ?? undefined,
+    phone: formData.get("phone") ?? undefined,
+    whatsapp: formData.get("whatsapp") ?? undefined,
+    website: formData.get("website") ?? undefined,
+    kind: formData.get("kind") ?? undefined,
     latitude: formData.get("latitude") ?? undefined,
     longitude: formData.get("longitude") ?? undefined,
     currency: formData.get("currency") || undefined,
@@ -115,6 +129,10 @@ export async function createSiteAction(
       city: data.city,
       country: data.country,
       openingHours: data.openingHours,
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      website: data.website,
+      kind: data.kind,
       latitude: data.latitude === null || data.longitude === null ? null : data.latitude,
       longitude: data.latitude === null || data.longitude === null ? null : data.longitude,
       coverImageUrl: uploads.cover ?? null,
@@ -195,6 +213,9 @@ export async function updateSiteAction(
       city: data.city,
       country: data.country,
       openingHours: data.openingHours,
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      website: data.website,
       latitude: data.latitude === null || data.longitude === null ? null : data.latitude,
       longitude: data.latitude === null || data.longitude === null ? null : data.longitude,
       // `undefined` leaves the stored cover untouched.

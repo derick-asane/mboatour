@@ -30,6 +30,10 @@ export type SiteFormValues = {
   city: string | null;
   country: string | null;
   openingHours: string | null;
+  phone: string | null;
+  whatsapp: string | null;
+  website: string | null;
+  kind: string;
   latitude: number | null;
   longitude: number | null;
   coverImageUrl: string | null;
@@ -43,12 +47,16 @@ type SiteFormProps = {
   action: (state: ActionState, formData: FormData) => Promise<ActionState>;
   submitLabel: string;
   values?: SiteFormValues;
+  /// Offered when what is being described could be one of several things, as a
+  /// service can. A touristic site passes nothing and the control is hidden.
+  kinds?: readonly string[];
 };
 
-export function SiteForm({ action, submitLabel, values }: SiteFormProps) {
+export function SiteForm({ action, submitLabel, values, kinds }: SiteFormProps) {
   const t = useTranslations("SiteForm");
   const common = useTranslations("Common");
   const categories = useTranslations("Categories");
+  const placeKinds = useTranslations("PlaceKinds");
   const [state, formAction] = useActionState(action, initialActionState);
   // Drives the price step: FCFA is whole-number, dollars and euros are not.
   const [currency, setCurrency] = useState(values?.currency ?? DEFAULT_CURRENCY);
@@ -60,6 +68,23 @@ export function SiteForm({ action, submitLabel, values }: SiteFormProps) {
       {values?.id ? <input type="hidden" name="siteId" value={values.id} /> : null}
 
       <FormSection title={t("groupBasics")}>
+        {kinds ? (
+          <Field label={t("kind")} hint={t("kindHint")}>
+            <select
+              className={cls("kind")}
+              name="kind"
+              defaultValue={values?.kind ?? kinds[0]}
+              required
+            >
+              {kinds.map((kind) => (
+                <option key={kind} value={kind}>
+                  {placeKinds(kind)}
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : null}
+
         <Field label={t("name")}>
           <input
             className={cls("name")}
@@ -110,6 +135,42 @@ export function SiteForm({ action, submitLabel, values }: SiteFormProps) {
       <FormSection title={t("groupPhotos")} description={t("groupPhotosHint")}>
         <CoverImageField currentUrl={values?.coverImageUrl ?? null} />
         <GalleryField images={values?.images ?? []} />
+      </FormSection>
+
+      <FormSection title={t("groupContact")} description={t("groupContactHint")}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label={t("phone")}>
+            <input
+              className={cls("phone")}
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              placeholder="+237 6XX XX XX XX"
+              defaultValue={values?.phone ?? ""}
+            />
+          </Field>
+
+          <Field label={t("whatsapp")}>
+            <input
+              className={cls("whatsapp")}
+              name="whatsapp"
+              type="tel"
+              inputMode="tel"
+              placeholder="+237 6XX XX XX XX"
+              defaultValue={values?.whatsapp ?? ""}
+            />
+          </Field>
+
+          <Field label={t("website")}>
+            <input
+              className={cls("website")}
+              name="website"
+              type="url"
+              placeholder="https://"
+              defaultValue={values?.website ?? ""}
+            />
+          </Field>
+        </div>
       </FormSection>
 
       <FormSection title={t("groupLocation")}>

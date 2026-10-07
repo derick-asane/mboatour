@@ -27,6 +27,7 @@ export async function SiteHeader() {
   const links = (
     <>
       <NavLink href="/sites">{t("sites")}</NavLink>
+      <NavLink href="/services">{t("services")}</NavLink>
       <NavLink href="/guides">{t("guides")}</NavLink>
       {user ? <NavLink href="/dashboard">{t("dashboard")}</NavLink> : null}
       {user ? <NavLink href="/chats">{t("chats")}</NavLink> : null}

@@ -44,6 +44,10 @@ export default async function SiteDetailPage({
 
   if (!site) notFound();
 
+  // A service lives under /services; serving it here would give it two
+  // addresses and a page built for somewhere you visit.
+  if (site.kind !== "SITE") notFound();
+
   const user = await getCurrentUser();
   const membership = user ? await getMembership(user.id, site.id) : null;
 

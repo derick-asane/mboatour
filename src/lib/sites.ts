@@ -12,9 +12,22 @@ export type SiteVisibility = {
   verification: string;
 };
 
-/// A `where` fragment for any query that serves the public.
+/// A `where` fragment for any query that serves the public. It says nothing
+/// about what kind of listing it is, so callers that serve one tab add that
+/// themselves.
 export function publicSiteWhere() {
   return { published: true, verification: "VERIFIED" as const };
+}
+
+/// Public touristic sites only — the explore tab, and anything a guide can be
+/// asked to cover.
+export function publicTouristicSiteWhere() {
+  return { ...publicSiteWhere(), kind: "SITE" as const };
+}
+
+/// Public services only: everything that is not a touristic site.
+export function publicServiceWhere() {
+  return { ...publicSiteWhere(), kind: { not: "SITE" as const } };
 }
 
 /// The same rule for a site already in hand.

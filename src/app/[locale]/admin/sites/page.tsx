@@ -40,6 +40,7 @@ export default async function AdminSitesPage({
 
   const t = await getTranslations("Admin");
   const verification = await getTranslations("Verification");
+  const kinds = await getTranslations("PlaceKinds");
   const categories = await getTranslations("Categories");
   const format = await getFormatter();
 
@@ -94,6 +95,7 @@ export default async function AdminSitesPage({
                     >
                       {site.name}
                     </Link>
+                    <span className="badge">{kinds(site.kind)}</span>
                     <span className={`badge ${TONES[site.verification]}`}>
                       {verification(site.verification)}
                     </span>

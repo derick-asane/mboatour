@@ -32,7 +32,8 @@
     "account": "Votre compte",
     "guides": "Guides",
     "guiding": "Guidage",
-    "chats": "Messages"
+    "chats": "Messages",
+    "services": "Services"
   },
   "Locales": {
     "en": "English",
@@ -113,7 +114,15 @@
     "groupVisiting": "Visite et publication",
     "categoryPlaceholder": "Choisir une catégorie",
     "groupPhotos": "Photos",
-    "groupPhotosHint": "La couverture apparaît sur les cartes et en haut de la page du site."
+    "groupPhotosHint": "La couverture apparaît sur les cartes et en haut de la page du site.",
+    "kind": "De quoi s’agit-il ?",
+    "kindHint": "Choisissez ce qui correspond le mieux. C’est ainsi que les voyageurs vous trouveront.",
+    "groupContact": "Pour vous joindre",
+    "groupContactHint": "Comment un voyageur peut vous contacter. Renseignez-en au moins un.",
+    "phone": "Téléphone",
+    "whatsapp": "WhatsApp",
+    "website": "Site web",
+    "createService": "Proposer le service"
   },
   "Site": {
     "about": "À propos",
@@ -905,5 +914,36 @@
     "priorCount": "{count, plural, =1 {# signalement} other {# signalements au total}}",
     "guideSuspended": "Déjà suspendu",
     "decidedBy": "Clos par {name} le {date}"
+  },
+  "PlaceKinds": {
+    "SITE": "Site touristique",
+    "HOTEL": "Hôtel",
+    "RESTAURANT": "Restaurant",
+    "TRANSPORT": "Transport",
+    "TOUR_OPERATOR": "Tour-opérateur",
+    "SHOP": "Boutique",
+    "OTHER": "Autre service"
+  },
+  "Services": {
+    "title": "Services",
+    "subtitle": "Où dormir, où manger et comment se déplacer — chaque adresse vérifiée par l’équipe Mboatour.",
+    "create": "Proposer un service",
+    "createTitle": "Proposer un service",
+    "createSubtitle": "Parlez-nous de votre hôtel, de votre restaurant ou de votre service. Il apparaîtra aux voyageurs dès que l’équipe Mboatour l’aura vérifié.",
+    "searchPlaceholder": "Rechercher par nom ou par ville",
+    "allKinds": "Tous",
+    "empty": "Aucun service pour l’instant",
+    "emptyHint": "Aucun service vérifié ne correspond. Si vous en tenez un, proposez-le et l’équipe l’examinera.",
+    "fromPrice": "À partir de {price}",
+    "about": "À propos",
+    "practical": "Informations pratiques",
+    "priceFrom": "À partir de",
+    "address": "Adresse",
+    "contact": "Nous joindre",
+    "phone": "Téléphone",
+    "whatsapp": "WhatsApp",
+    "website": "Site web",
+    "viewOnMap": "Voir sur la carte",
+    "manage": "Gérer ce service"
   }
 }
