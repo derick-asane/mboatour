@@ -13,6 +13,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
+import { siteHiddenReason } from "@/lib/sites";
 import { requireUser } from "@/server/session";
 
 export default async function DashboardPage({
@@ -28,6 +29,8 @@ export default async function DashboardPage({
   const members = await getTranslations("Members");
   const sitesT = await getTranslations("Sites");
   const chat = await getTranslations("Chat");
+  const placeKinds = await getTranslations("PlaceKinds");
+  const verificationT = await getTranslations("Verification");
   const payments = await getTranslations("Payment");
   const bookingT = await getTranslations("Booking");
   const format = await getFormatter();
@@ -37,7 +40,17 @@ export default async function DashboardPage({
     prisma.siteMember.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: "desc" },
-      include: { site: { select: { name: true, slug: true, published: true } } },
+      include: {
+        site: {
+          select: {
+            name: true,
+            slug: true,
+            kind: true,
+            published: true,
+            verification: true,
+          },
+        },
+      },
     }),
     prisma.booking.findMany({
       where: { userId: user.id },
@@ -155,8 +168,18 @@ export default async function DashboardPage({
                       : members("admin")}
                   </p>
                 </div>
-                {!membership.site.published ? (
+                {membership.site.kind !== "SITE" ? (
+                  <span className="badge">
+                    {placeKinds(membership.site.kind)}
+                  </span>
+                ) : null}
+
+                {siteHiddenReason(membership.site) === "unpublished" ? (
                   <StatusBadge status="DRAFT" />
+                ) : siteHiddenReason(membership.site) ? (
+                  <span className="badge badge-warning">
+                    {verificationT(membership.site.verification)}
+                  </span>
                 ) : null}
                 <Link
                   href={`/manage/${membership.site.slug}`}

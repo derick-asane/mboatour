@@ -122,7 +122,13 @@
     "phone": "Phone",
     "whatsapp": "WhatsApp",
     "website": "Website",
-    "createService": "List the service"
+    "createService": "List the service",
+    "nameService": "Service name",
+    "publishedService": "Publish this service",
+    "publishedHintService": "Publishing is your half of it. A service appears publicly once the Mboatour team has also verified it.",
+    "groupPhotosHintService": "The cover appears on cards and at the top of your service page.",
+    "entryFeeService": "Price from",
+    "groupVisitingService": "Price"
   },
   "Site": {
     "about": "About",
@@ -143,7 +149,7 @@
     "manageCta": "Manage this site",
     "pendingVisitNotice": "You already have a pending request for this site.",
     "gallery": "Photos",
-    "hiddenUnpublished": "Only your team can see this page. Publish the site, then ask the Mboatour team to verify it.",
+    "hiddenUnpublished": "Only your team can see this page. Publish it, then ask the Mboatour team to verify it.",
     "hiddenAwaitingVerification": "Only your team can see this page. It appears to travellers once the Mboatour team verifies it."
   },
   "Events": {
@@ -190,8 +196,8 @@
   "Dashboard": {
     "title": "Your dashboard",
     "subtitle": "Your sites, bookings and visit requests.",
-    "mySites": "Sites you administer",
-    "mySitesEmpty": "You do not administer any site yet.",
+    "mySites": "Sites and services you administer",
+    "mySitesEmpty": "You do not administer any site or service yet.",
     "myBookings": "Your bookings",
     "myBookingsEmpty": "You have not booked any event yet.",
     "myVisits": "Your visit requests",
@@ -203,7 +209,7 @@
   },
   "Manage": {
     "overview": "Overview",
-    "settings": "Site settings",
+    "settings": "Settings",
     "events": "Events",
     "members": "Admins",
     "visits": "Visit requests",
@@ -424,9 +430,9 @@
     "VERIFIED": "Verified",
     "REJECTED": "Rejected",
     "DRAFT": "Draft",
-    "UNVERIFIEDHint": "Ask the Mboatour team to review this site and grant its badge.",
-    "PENDINGHint": "The Mboatour team is reviewing this site.",
-    "VERIFIEDHint": "This site carries the verified badge.",
+    "UNVERIFIEDHint": "Ask the Mboatour team to review this and grant its badge.",
+    "PENDINGHint": "The Mboatour team is reviewing this.",
+    "VERIFIEDHint": "Checked and approved by the Mboatour team",
     "REJECTEDHint": "The review did not pass. Fix the points below, then ask again."
   },
   "Admin": {

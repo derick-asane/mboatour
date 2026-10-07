@@ -122,7 +122,13 @@
     "phone": "Téléphone",
     "whatsapp": "WhatsApp",
     "website": "Site web",
-    "createService": "Proposer le service"
+    "createService": "Proposer le service",
+    "nameService": "Nom du service",
+    "publishedService": "Publier ce service",
+    "publishedHintService": "La publication est votre part. Un service apparaît publiquement une fois que l’équipe Mboatour l’a également vérifié.",
+    "groupPhotosHintService": "La photo de couverture apparaît sur les cartes et en haut de la page de votre service.",
+    "entryFeeService": "À partir de",
+    "groupVisitingService": "Tarif"
   },
   "Site": {
     "about": "À propos",
@@ -143,7 +149,7 @@
     "manageCta": "Gérer ce site",
     "pendingVisitNotice": "Vous avez déjà une demande en attente pour ce site.",
     "gallery": "Photos",
-    "hiddenUnpublished": "Seule votre équipe voit cette page. Publiez le site, puis demandez à l’équipe Mboatour de le vérifier.",
+    "hiddenUnpublished": "Seule votre équipe voit cette page. Publiez-la, puis demandez à l’équipe Mboatour de la vérifier.",
     "hiddenAwaitingVerification": "Seule votre équipe voit cette page. Elle apparaîtra aux voyageurs dès que l’équipe Mboatour l’aura vérifiée."
   },
   "Events": {
@@ -190,8 +196,8 @@
   "Dashboard": {
     "title": "Votre tableau de bord",
     "subtitle": "Vos sites, réservations et demandes de visite.",
-    "mySites": "Sites que vous administrez",
-    "mySitesEmpty": "Vous n'administrez encore aucun site.",
+    "mySites": "Sites et services que vous administrez",
+    "mySitesEmpty": "Vous n’administrez encore aucun site ni service.",
     "myBookings": "Vos réservations",
     "myBookingsEmpty": "Vous n'avez encore réservé aucun événement.",
     "myVisits": "Vos demandes de visite",
@@ -203,7 +209,7 @@
   },
   "Manage": {
     "overview": "Vue d'ensemble",
-    "settings": "Paramètres du site",
+    "settings": "Paramètres",
     "events": "Événements",
     "members": "Administrateurs",
     "visits": "Demandes de visite",
@@ -424,9 +430,9 @@
     "VERIFIED": "Vérifié",
     "REJECTED": "Refusé",
     "DRAFT": "Brouillon",
-    "UNVERIFIEDHint": "Demandez à l’équipe Mboatour d’examiner ce site pour obtenir le badge.",
-    "PENDINGHint": "L’équipe Mboatour examine ce site.",
-    "VERIFIEDHint": "Ce site porte le badge vérifié.",
+    "UNVERIFIEDHint": "Demandez à l’équipe Mboatour de l’examiner et d’accorder son badge.",
+    "PENDINGHint": "L’équipe Mboatour est en train de l’examiner.",
+    "VERIFIEDHint": "Vérifié et approuvé par l’équipe Mboatour",
     "REJECTEDHint": "L’examen n’a pas abouti. Corrigez les points ci-dessous, puis redemandez."
   },
   "Admin": {

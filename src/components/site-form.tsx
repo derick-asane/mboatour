@@ -57,6 +57,10 @@ export function SiteForm({ action, submitLabel, values, kinds }: SiteFormProps) 
   const common = useTranslations("Common");
   const categories = useTranslations("Categories");
   const placeKinds = useTranslations("PlaceKinds");
+  // Offering kinds is what makes this a service rather than a touristic site,
+  // so the same flag picks the wording.
+  const isService = kinds !== undefined;
+  const label = (key: string) => (isService ? t(`${key}Service`) : t(key));
   const [state, formAction] = useActionState(action, initialActionState);
   // Drives the price step: FCFA is whole-number, dollars and euros are not.
   const [currency, setCurrency] = useState(values?.currency ?? DEFAULT_CURRENCY);
@@ -85,7 +89,7 @@ export function SiteForm({ action, submitLabel, values, kinds }: SiteFormProps) 
           </Field>
         ) : null}
 
-        <Field label={t("name")}>
+        <Field label={label("name")}>
           <input
             className={cls("name")}
             name="name"
@@ -132,7 +136,10 @@ export function SiteForm({ action, submitLabel, values, kinds }: SiteFormProps) 
         </Field>
       </FormSection>
 
-      <FormSection title={t("groupPhotos")} description={t("groupPhotosHint")}>
+      <FormSection
+        title={t("groupPhotos")}
+        description={label("groupPhotosHint")}
+      >
         <CoverImageField currentUrl={values?.coverImageUrl ?? null} />
         <GalleryField images={values?.images ?? []} />
       </FormSection>
@@ -215,9 +222,9 @@ export function SiteForm({ action, submitLabel, values, kinds }: SiteFormProps) 
         />
       </FormSection>
 
-      <FormSection title={t("groupVisiting")}>
+      <FormSection title={label("groupVisiting")}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={t("entryFee")}>
+          <Field label={label("entryFee")}>
             <input
               className={cls("entryFee")}
               name="entryFee"
@@ -255,8 +262,8 @@ export function SiteForm({ action, submitLabel, values, kinds }: SiteFormProps) 
             className="mt-0.5"
           />
           <span>
-            <span className="font-medium">{t("published")}</span>
-            <span className="hint block">{t("publishedHint")}</span>
+            <span className="font-medium">{label("published")}</span>
+            <span className="hint block">{label("publishedHint")}</span>
           </span>
         </label>
       </FormSection>
