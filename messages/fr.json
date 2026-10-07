@@ -33,7 +33,8 @@
     "guides": "Guides",
     "guiding": "Guidage",
     "chats": "Messages",
-    "services": "Services"
+    "services": "Services",
+    "ask": "Demander"
   },
   "Locales": {
     "en": "English",
@@ -393,7 +394,12 @@
     "outcomeRequired": "Indiquez la conclusion avant de clore.",
     "complaintMissing": "Ce signalement n’existe plus.",
     "complaintClosed": "Ce signalement a déjà été clos.",
-    "bookingMissing": "Cette réservation n’existe plus."
+    "bookingMissing": "Cette réservation n’existe plus.",
+    "questionTooShort": "Posez une question plus complète pour qu’il ait de quoi travailler.",
+    "tooManyQuestions": "Cela fait beaucoup de questions d’un coup. Patientez quelques minutes et redemandez.",
+    "assistantUnavailable": "L’assistant n’est pas encore activé sur ce serveur.",
+    "assistantFailed": "L’assistant n’a pas pu répondre pour le moment. Réessayez dans un instant.",
+    "nothingToSearch": "Il n’y a encore rien de vérifié à recommander, donc rien à chercher."
   },
   "Categories": {
     "MUSEUM": "Musée",
@@ -951,5 +957,22 @@
     "website": "Site web",
     "viewOnMap": "Voir sur la carte",
     "manage": "Gérer ce service"
+  },
+  "Assistant": {
+    "title": "Demander à Mboatour",
+    "subtitle": "Posez une question sur un voyage au Cameroun et laissez-vous conduire aux adresses qui y répondent.",
+    "questionLabel": "Votre question",
+    "placeholder": "Où puis-je faire une randonnée près de Buea, et où dormir ?",
+    "ask": "Demander",
+    "thinking": "Réflexion…",
+    "answerTitle": "Réponse",
+    "recommended": "Adresses suggérées",
+    "noneMatched": "Rien dans le catalogue ne correspondait d’assez près pour être recommandé.",
+    "disclaimer": "Les réponses viennent d’un modèle et peuvent se tromper. Il ne recommande que des adresses référencées ici.",
+    "notConfigured": "L’assistant n’est pas activé : aucune clé MISTRAL_API_KEY n’est configurée sur le serveur.",
+    "failed": "L’assistant n’a pas pu répondre pour le moment. Réessayez dans un instant.",
+    "example1": "Où faire une randonnée ?",
+    "example2": "Où dormir à Buea",
+    "example3": "Que faire ce week-end ?"
   }
 }

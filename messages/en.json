@@ -33,7 +33,8 @@
     "guides": "Guides",
     "guiding": "Guiding",
     "chats": "Chats",
-    "services": "Services"
+    "services": "Services",
+    "ask": "Ask"
   },
   "Locales": {
     "en": "English",
@@ -393,7 +394,12 @@
     "outcomeRequired": "Say what was concluded before closing this.",
     "complaintMissing": "That report is gone.",
     "complaintClosed": "That report has already been closed.",
-    "bookingMissing": "That booking is gone."
+    "bookingMissing": "That booking is gone.",
+    "questionTooShort": "Ask a fuller question so there is something to go on.",
+    "tooManyQuestions": "That is a lot of questions at once. Give it a few minutes and ask again.",
+    "assistantUnavailable": "The assistant is not switched on on this server yet.",
+    "assistantFailed": "The assistant could not answer just now. Try again in a moment.",
+    "nothingToSearch": "There is nothing verified to recommend yet, so there is nothing to search."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -951,5 +957,22 @@
     "website": "Website",
     "viewOnMap": "See it on the map",
     "manage": "Manage this service"
+  },
+  "Assistant": {
+    "title": "Ask Mboatour",
+    "subtitle": "Ask about travelling in Cameroon and get taken to the places that answer it.",
+    "questionLabel": "Your question",
+    "placeholder": "Where can I hike near Buea, and where could I stay?",
+    "ask": "Ask",
+    "thinking": "Thinking…",
+    "answerTitle": "Answer",
+    "recommended": "Places it suggests",
+    "noneMatched": "Nothing in the catalogue matched closely enough to recommend.",
+    "disclaimer": "Answers come from a model and can be wrong. It only recommends places listed here.",
+    "notConfigured": "The assistant is not switched on: no MISTRAL_API_KEY is set on the server.",
+    "failed": "The assistant could not answer just now. Try again in a moment.",
+    "example1": "Where can I hike?",
+    "example2": "Somewhere to stay in Buea",
+    "example3": "What can I do this weekend?"
   }
 }
