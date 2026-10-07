@@ -984,5 +984,24 @@
     "heardNothing": "Rien n’a été enregistré. Réessayez, un peu plus près du micro.",
     "micRefused": "Le micro n’était pas disponible. Autorisez-le dans votre navigateur, ou tapez la question.",
     "heardYouSay": "Entendu : « {question} »"
+  },
+  "Receipt": {
+    "title": "Reçu de réservation",
+    "download": "Reçu",
+    "reference": "Référence",
+    "issued": "Émis le",
+    "status": "Statut",
+    "confirmed": "Confirmée",
+    "cancelled": "Annulée",
+    "bookedBy": "Réservé par",
+    "payment": "Paiement",
+    "noPayment": "Aucun paiement encaissé",
+    "free": "Gratuit",
+    "cardEnding": "Carte se terminant par {last4}",
+    "paidOn": "Payé le {date}",
+    "refundedOn": "Remboursé le {date}",
+    "providerRef": "Transaction {ref}",
+    "footer": "Merci d’avoir réservé avec {appName}. Conservez ce reçu.",
+    "location": "Point de rendez-vous"
   }
 }

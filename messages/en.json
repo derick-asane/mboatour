@@ -984,5 +984,24 @@
     "heardNothing": "Nothing was recorded. Try again, a little closer to the microphone.",
     "micRefused": "The microphone was not available. Allow it in your browser, or type the question instead.",
     "heardYouSay": "Heard: “{question}”"
+  },
+  "Receipt": {
+    "title": "Booking receipt",
+    "download": "Receipt",
+    "reference": "Reference",
+    "issued": "Issued",
+    "status": "Status",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "bookedBy": "Booked by",
+    "payment": "Payment",
+    "noPayment": "No payment taken",
+    "free": "Free",
+    "cardEnding": "Card ending {last4}",
+    "paidOn": "Paid on {date}",
+    "refundedOn": "Refunded on {date}",
+    "providerRef": "Transaction {ref}",
+    "footer": "Thank you for booking with {appName}. Keep this receipt for your records.",
+    "location": "Meeting point"
   }
 }

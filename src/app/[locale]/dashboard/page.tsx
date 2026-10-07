@@ -30,6 +30,7 @@ export default async function DashboardPage({
   const sitesT = await getTranslations("Sites");
   const chat = await getTranslations("Chat");
   const placeKinds = await getTranslations("PlaceKinds");
+  const receipts = await getTranslations("Receipt");
   const verificationT = await getTranslations("Verification");
   const payments = await getTranslations("Payment");
   const bookingT = await getTranslations("Booking");
@@ -261,6 +262,15 @@ export default async function DashboardPage({
                   ) : null}
                 </div>
                 <StatusBadge status={booking.status} />
+
+                <a
+                  href={`/api/bookings/${booking.reference}/receipt?locale=${locale}`}
+                  className="btn-secondary btn-sm"
+                  download
+                >
+                  {receipts("download")}
+                </a>
+
                 {booking.status !== "CANCELLED" ? (
                   <>
                     <Link
