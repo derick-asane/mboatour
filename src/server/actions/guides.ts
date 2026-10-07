@@ -8,6 +8,7 @@ import { isGuideLanguage, MAX_GUIDE_BIO, MAX_GUIDE_HEADLINE } from "@/lib/guides
 import { normalisePhone } from "@/lib/payments";
 import { isPlatformAdmin } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
+import { isSitePublic } from "@/lib/sites";
 import { uniqueSlug } from "@/lib/slug";
 import { isUploadedFile, saveUploadedImage } from "@/lib/uploads";
 import { failure, fieldFailure, type ActionState } from "@/server/action-state";
@@ -249,10 +250,10 @@ export async function requestEndorsementAction(
 
   const site = await prisma.touristicSite.findUnique({
     where: { id: siteId },
-    select: { id: true, slug: true, published: true },
+    select: { id: true, slug: true, published: true, verification: true },
   });
 
-  if (!site?.published) return failure("siteNotFound");
+  if (!site || !isSitePublic(site)) return failure("siteNotFound");
 
   await prisma.guideEndorsement.upsert({
     where: { guideId_siteId: { guideId: profile.id, siteId: site.id } },

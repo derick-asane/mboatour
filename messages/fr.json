@@ -105,7 +105,7 @@
     "currency": "Devise",
     "entryFee": "Droit d'entrée",
     "published": "Publier ce site",
-    "publishedHint": "Les sites publiés sont visibles publiquement et peuvent recevoir des demandes de visite.",
+    "publishedHint": "La publication est votre part. Un site apparaît publiquement une fois que l’équipe Mboatour l’a également vérifié.",
     "create": "Créer le site",
     "save": "Enregistrer les modifications",
     "groupBasics": "Informations principales",
@@ -133,7 +133,9 @@
     "signInToRequest": "Connectez-vous pour demander une visite",
     "manageCta": "Gérer ce site",
     "pendingVisitNotice": "Vous avez déjà une demande en attente pour ce site.",
-    "gallery": "Photos"
+    "gallery": "Photos",
+    "hiddenUnpublished": "Seule votre équipe voit cette page. Publiez le site, puis demandez à l’équipe Mboatour de le vérifier.",
+    "hiddenAwaitingVerification": "Seule votre équipe voit cette page. Elle apparaîtra aux voyageurs dès que l’équipe Mboatour l’aura vérifiée."
   },
   "Events": {
     "upcoming": "Événements à venir",

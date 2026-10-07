@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { isSitePublic } from "@/lib/sites";
 import { failure, type ActionState } from "@/server/action-state";
 import {
   sendVisitDecisionEmail,
@@ -43,10 +44,16 @@ export async function requestVisitAction(
 
   const site = await prisma.touristicSite.findUnique({
     where: { id: siteId },
-    select: { id: true, slug: true, name: true, published: true },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      published: true,
+      verification: true,
+    },
   });
 
-  if (!site?.published) return failure("siteNotFound");
+  if (!site || !isSitePublic(site)) return failure("siteNotFound");
 
   // Nobody asks their own team for permission to come in. Checked here as well
   // as hidden in the page, because a form can always be submitted by hand.

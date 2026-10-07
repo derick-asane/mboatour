@@ -10,6 +10,7 @@ import { RatingSummary, Stars } from "@/components/reviews/stars";
 import { Link } from "@/i18n/navigation";
 import { formatMoney } from "@/lib/format";
 import { isGuideLanguage } from "@/lib/guides";
+import { publicSiteWhere } from "@/lib/sites";
 import { isPlatformAdmin } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
 import { canReviewGuide } from "@/server/guide-reviews";
@@ -41,9 +42,10 @@ export default async function GuidePage({
 
   const viewer = await getCurrentUser();
 
-  // Somewhere to take them: only published sites can be named in a request.
+  // Somewhere to take them: only sites the public can actually see may be
+  // named in a request.
   const sites = await prisma.touristicSite.findMany({
-    where: { published: true },
+    where: publicSiteWhere(),
     orderBy: { name: "asc" },
     select: { id: true, name: true },
     take: 50,

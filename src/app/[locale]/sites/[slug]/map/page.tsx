@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { SiteMapScreen } from "@/components/map/site-map-screen";
 import { prisma } from "@/lib/prisma";
+import { isSitePublic } from "@/lib/sites";
 import { getCurrentUser, getMembership } from "@/server/session";
 
 export async function generateMetadata({
@@ -45,6 +46,7 @@ export default async function SiteMapPage({
       latitude: true,
       longitude: true,
       published: true,
+      verification: true,
     },
   });
 
@@ -53,7 +55,9 @@ export default async function SiteMapPage({
   // Nothing to show without a position, and drafts stay with their team.
   if (site.latitude === null || site.longitude === null) notFound();
 
-  if (!site.published) {
+  // A site the platform has not verified stays with its own team, the same as
+  // its main page.
+  if (!isSitePublic(site)) {
     const user = await getCurrentUser();
     const membership = user ? await getMembership(user.id, site.id) : null;
 

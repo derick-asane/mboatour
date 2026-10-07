@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { isPaymentMethod, needsPhone, normalisePhone } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
+import { publicSiteWhere } from "@/lib/sites";
 import { failure, type ActionState } from "@/server/action-state";
 import {
   sendGuideCancelledEmail,
@@ -141,7 +142,7 @@ export async function requestGuideAction(
 
   // Only real, published sites, so a request cannot name somewhere private.
   const sites = await prisma.touristicSite.findMany({
-    where: { id: { in: siteIds }, published: true },
+    where: { id: { in: siteIds }, ...publicSiteWhere() },
     select: { id: true, name: true },
   });
 

@@ -105,7 +105,7 @@
     "currency": "Currency",
     "entryFee": "Entry fee",
     "published": "Publish this site",
-    "publishedHint": "Published sites appear publicly and can receive visit requests.",
+    "publishedHint": "Publishing is your half of it. A site appears publicly once the Mboatour team has also verified it.",
     "create": "Create site",
     "save": "Save changes",
     "groupBasics": "Basics",
@@ -133,7 +133,9 @@
     "signInToRequest": "Sign in to request a visit",
     "manageCta": "Manage this site",
     "pendingVisitNotice": "You already have a pending request for this site.",
-    "gallery": "Photos"
+    "gallery": "Photos",
+    "hiddenUnpublished": "Only your team can see this page. Publish the site, then ask the Mboatour team to verify it.",
+    "hiddenAwaitingVerification": "Only your team can see this page. It appears to travellers once the Mboatour team verifies it."
   },
   "Events": {
     "upcoming": "Upcoming events",

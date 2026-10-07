@@ -13,6 +13,7 @@ import {
   normalisePhone,
 } from "@/lib/payments";
 import { prisma } from "@/lib/prisma";
+import { isSitePublic } from "@/lib/sites";
 import { bookingReference } from "@/lib/slug";
 import { failure, type ActionState } from "@/server/action-state";
 import {
@@ -142,12 +143,21 @@ export async function bookEventAction(
       currency: true,
       title: true,
       siteId: true,
-      site: { select: { slug: true, name: true } },
+      site: {
+        select: {
+          slug: true,
+          name: true,
+          published: true,
+          verification: true,
+        },
+      },
     },
   });
 
   if (!event) return failure("eventNotFound");
   if (event.status !== "PUBLISHED") return failure("eventNotBookable");
+  // An event is only as public as the place it happens at.
+  if (!isSitePublic(event.site)) return failure("eventNotBookable");
   // Only a finished event is too late to book.
   if (hasEnded(event)) return failure("eventPast");
 

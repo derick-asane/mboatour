@@ -14,6 +14,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { VerifiedBadge } from "@/components/verified-badge";
 import { Link } from "@/i18n/navigation";
 import { openEventWhere } from "@/lib/events";
+import { siteHiddenReason } from "@/lib/sites";
 import { formatMoney } from "@/lib/format";
 import { isPlatformAdmin } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
@@ -33,6 +34,7 @@ export default async function SiteDetailPage({
   const common = await getTranslations("Common");
   const chatT = await getTranslations("Chat");
   const categories = await getTranslations("Categories");
+  const verificationT = await getTranslations("Verification");
   const format = await getFormatter();
 
   const site = await prisma.touristicSite.findUnique({
@@ -45,8 +47,11 @@ export default async function SiteDetailPage({
   const user = await getCurrentUser();
   const membership = user ? await getMembership(user.id, site.id) : null;
 
-  // Drafts stay visible to the site team only.
-  if (!site.published && !membership) notFound();
+  // A site nobody has verified is visible to its own team only: the platform
+  // has not vouched for it yet, so it is not put in front of travellers.
+  const hidden = siteHiddenReason(site);
+
+  if (hidden && !membership) notFound();
 
   const events = await prisma.event.findMany({
     where: {
@@ -134,6 +139,14 @@ export default async function SiteDetailPage({
 
   return (
     <div className="space-y-10">
+      {hidden ? (
+        <p className="alert alert-warning">
+          {hidden === "unpublished"
+            ? t("hiddenUnpublished")
+            : t("hiddenAwaitingVerification")}
+        </p>
+      ) : null}
+
       {/* A cover photo carries the place better than any heading, so it runs
           full width with the name laid over it. Without one, the same block
           falls back to plain type on the surface. */}
@@ -161,7 +174,12 @@ export default async function SiteDetailPage({
                   </span>
                 ) : null}
                 {site.verification === "VERIFIED" ? <VerifiedBadge /> : null}
-                {!site.published ? <StatusBadge status="DRAFT" /> : null}
+                {hidden === "unpublished" ? <StatusBadge status="DRAFT" /> : null}
+                {hidden === "awaitingVerification" ? (
+                  <span className="badge badge-warning">
+                    {verificationT(site.verification)}
+                  </span>
+                ) : null}
               </div>
 
               <h1 className="text-3xl font-semibold tracking-tight text-white drop-shadow-sm sm:text-[2.75rem] sm:leading-[1.1]">
@@ -205,7 +223,12 @@ export default async function SiteDetailPage({
                 </span>
               ) : null}
               {site.verification === "VERIFIED" ? <VerifiedBadge /> : null}
-              {!site.published ? <StatusBadge status="DRAFT" /> : null}
+              {hidden === "unpublished" ? <StatusBadge status="DRAFT" /> : null}
+              {hidden === "awaitingVerification" ? (
+                <span className="badge badge-warning">
+                  {verificationT(site.verification)}
+                </span>
+              ) : null}
             </div>
 
             <h1 className="page-title sm:text-[2.125rem]">{site.name}</h1>
