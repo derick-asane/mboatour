@@ -26,6 +26,8 @@ export type Recommendation = {
 export type AssistantState = {
   error?: string;
   question?: string;
+  /// True when the question was spoken, so the page can show what was heard.
+  spoken?: boolean;
   answer?: string;
   recommendations?: Recommendation[];
 };

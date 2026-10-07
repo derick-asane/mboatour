@@ -4,6 +4,7 @@ import { getLocale } from "next-intl/server";
 
 import { MAX_QUESTION_LENGTH, type AssistantState } from "@/lib/assistant";
 import { askAssistant } from "@/server/ai/assistant";
+import { transcribeAudio } from "@/server/ai/mistral";
 import { requireUser } from "@/server/session";
 
 /// Every question costs a call to a paid API, so one account cannot sit on the
@@ -41,13 +42,34 @@ export async function askAssistantAction(
   // Signed in only: an open endpoint onto a paid model is somebody else's bill.
   const user = await requireUser("/ask");
 
-  const question = String(formData.get("question") ?? "")
-    .trim()
-    .slice(0, MAX_QUESTION_LENGTH);
+  // A spoken question and a typed one are the same question once it is words,
+  // so only the way in differs.
+  const audio = formData.get("audio");
+  const spoken = audio instanceof File && audio.size > 0;
 
-  if (question.length < 3) return { error: "questionTooShort", question };
+  // The limit covers speech too: transcription is a second paid call, so this
+  // is checked before either of them.
+  if (!withinLimit(user.id)) {
+    return { error: "tooManyQuestions", question: spoken ? undefined : String(formData.get("question") ?? "") };
+  }
 
-  if (!withinLimit(user.id)) return { error: "tooManyQuestions", question };
+  let question: string;
+
+  if (spoken) {
+    const heard = await transcribeAudio(audio);
+
+    if (!heard.ok) return { error: heard.error };
+
+    question = heard.text.trim().slice(0, MAX_QUESTION_LENGTH);
+  } else {
+    question = String(formData.get("question") ?? "")
+      .trim()
+      .slice(0, MAX_QUESTION_LENGTH);
+  }
+
+  if (question.length < 3) {
+    return { error: spoken ? "heardNothing" : "questionTooShort", question };
+  }
 
   const locale = await getLocale();
   const result = await askAssistant(question, locale);
@@ -56,6 +78,7 @@ export async function askAssistantAction(
 
   return {
     question,
+    spoken,
     answer: result.value.answer,
     recommendations: result.value.recommendations,
   };

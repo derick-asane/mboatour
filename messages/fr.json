@@ -399,7 +399,10 @@
     "tooManyQuestions": "Cela fait beaucoup de questions d’un coup. Patientez quelques minutes et redemandez.",
     "assistantUnavailable": "L’assistant n’est pas encore activé sur ce serveur.",
     "assistantFailed": "L’assistant n’a pas pu répondre pour le moment. Réessayez dans un instant.",
-    "nothingToSearch": "Il n’y a encore rien de vérifié à recommander, donc rien à chercher."
+    "nothingToSearch": "Il n’y a encore rien de vérifié à recommander, donc rien à chercher.",
+    "heardNothing": "Rien n’a pu être compris dans cet enregistrement. Réessayez, ou tapez la question.",
+    "transcriptionFailed": "Cet enregistrement n’a pas pu être compris pour le moment. Réessayez dans un instant.",
+    "audioTooLarge": "Cet enregistrement est trop long. Restez sous une minute."
   },
   "Categories": {
     "MUSEUM": "Musée",
@@ -973,6 +976,13 @@
     "failed": "L’assistant n’a pas pu répondre pour le moment. Réessayez dans un instant.",
     "example1": "Où faire une randonnée ?",
     "example2": "Où dormir à Buea",
-    "example3": "Que faire ce week-end ?"
+    "example3": "Que faire ce week-end ?",
+    "speak": "Poser la question à voix haute",
+    "listening": "Écoute…",
+    "stopRecording": "Arrêter ({seconds} s)",
+    "preparing": "Préparation…",
+    "heardNothing": "Rien n’a été enregistré. Réessayez, un peu plus près du micro.",
+    "micRefused": "Le micro n’était pas disponible. Autorisez-le dans votre navigateur, ou tapez la question.",
+    "heardYouSay": "Entendu : « {question} »"
   }
 }

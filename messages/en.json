@@ -399,7 +399,10 @@
     "tooManyQuestions": "That is a lot of questions at once. Give it a few minutes and ask again.",
     "assistantUnavailable": "The assistant is not switched on on this server yet.",
     "assistantFailed": "The assistant could not answer just now. Try again in a moment.",
-    "nothingToSearch": "There is nothing verified to recommend yet, so there is nothing to search."
+    "nothingToSearch": "There is nothing verified to recommend yet, so there is nothing to search.",
+    "heardNothing": "Nothing could be made out in that recording. Try again, or type the question.",
+    "transcriptionFailed": "That recording could not be understood just now. Try again in a moment.",
+    "audioTooLarge": "That recording is too long. Keep it under a minute."
   },
   "Categories": {
     "MUSEUM": "Museum",
@@ -973,6 +976,13 @@
     "failed": "The assistant could not answer just now. Try again in a moment.",
     "example1": "Where can I hike?",
     "example2": "Somewhere to stay in Buea",
-    "example3": "What can I do this weekend?"
+    "example3": "What can I do this weekend?",
+    "speak": "Ask out loud",
+    "listening": "Listening…",
+    "stopRecording": "Stop ({seconds}s)",
+    "preparing": "Preparing…",
+    "heardNothing": "Nothing was recorded. Try again, a little closer to the microphone.",
+    "micRefused": "The microphone was not available. Allow it in your browser, or type the question instead.",
+    "heardYouSay": "Heard: “{question}”"
   }
 }

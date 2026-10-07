@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import { CoverImage } from "@/components/cover-image";
 import { RatingSummary } from "@/components/reviews/stars";
 import { Link } from "@/i18n/navigation";
+import { VoiceButton } from "@/app/[locale]/ask/voice-button";
 import { initialAssistantState, MAX_QUESTION_LENGTH } from "@/lib/assistant";
 import { askAssistantAction } from "@/server/actions/assistant";
 
@@ -64,10 +65,18 @@ export function AskClient({ examples }: { examples: string[] }) {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="hint">{t("disclaimer")}</p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <VoiceButton
+            onRecorded={(file) => {
+              const spoken = new FormData();
+              spoken.set("audio", file);
+              formAction(spoken);
+            }}
+          />
           <AskButton />
         </div>
+
+        <p className="hint">{t("disclaimer")}</p>
       </form>
 
       {state.error ? (
@@ -78,6 +87,10 @@ export function AskClient({ examples }: { examples: string[] }) {
 
       {state.answer ? (
         <section className="space-y-4">
+          {state.spoken && state.question ? (
+            <p className="hint">{t("heardYouSay", { question: state.question })}</p>
+          ) : null}
+
           <div className="card space-y-2">
             <p className="eyebrow">{t("answerTitle")}</p>
             <p className="whitespace-pre-wrap text-sm leading-relaxed">
